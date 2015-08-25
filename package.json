@@ -1,0 +1,21 @@
+{
+  "name": "gulp-inline-ng2-template",
+  "version": "0.0.1",
+  "description": "Gulp plugin to inline angular2 template into javascript file",
+  "main": "index.js",
+  "scripts": {
+    "test": "node_modules/.bin/mocha",
+    "test-w": "node_modules/.bin/mocha -w"
+  },
+  "author": "Ludovic Henin",
+  "license": "MIT",
+  "dependencies": {
+    "extend": "~3.0.0",
+    "gulp-util": "~3.0.6",
+    "through2": "~2.0.0"
+  },
+  "devDependencies": {
+    "mocha": "~2.2.5",
+    "vinyl": "~0.5.1"
+  }
+}
