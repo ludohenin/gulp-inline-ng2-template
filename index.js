@@ -40,11 +40,8 @@ function inline(file, options) {
       var tplPath = line.substring(index1, index2);
       var tplAbsPath = join(process.cwd(), options.base, tplPath);
       var tpl = fs.readFileSync(tplAbsPath, 'utf8');
-      lines[i] = onelinerStart(line) +
-                 TEMPLATE + ': `' +
-                 trimTrailingLineBreak(tpl) +
-                 '`' +
-                 onelinerEnd(line, options);
+
+      lines[i] = replace(line, tpl, options);
     }
   });
 
@@ -56,25 +53,16 @@ function inline(file, options) {
 
 // ----------------------
 // Utils
+function replace(line, tpl, options) {
+  var re = new RegExp('(' + TEMPLATE_URL + '.*' + options.quote + ')');
+  var match = re.exec(line)[0];
+  var newLine = line.replace(match, TEMPLATE +
+                                    ': `' +
+                                    trimTrailingLineBreak(tpl) +
+                                    '`');
+  return newLine;
+}
 function trimTrailingLineBreak(tpl) {
   var lines = tpl.split('\n');
   return (lines.pop() === '' ? lines.splice(-1, 1).join('\n') : tpl);
-}
-function onelinerStart(line) {
-  var prefix = '';
-  var startIndex = line.indexOf(TEMPLATE_URL);
-  if (startIndex > 0) { prefix = line.substring(0, startIndex); }
-
-  return prefix;
-}
-function onelinerEnd(line, options) {
-  var ext = options.extension;
-  var quote = options.quote;
-  var end = ext + quote;
-  var endLen = end.length;
-
-  var endIndex = line.indexOf(end);
-  var suffix = line.substring(endIndex + endLen);
-
-  return suffix;
 }
