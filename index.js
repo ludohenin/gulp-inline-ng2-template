@@ -44,7 +44,6 @@ function inline(file, options) {
                  TEMPLATE + ': `' +
                  trimTrailingLineBreak(tpl) +
                  '`' +
-                //  (hasTrailingComa(line) ? ',' : '') +
                  onelinerEnd(line, options);
     }
   });
@@ -57,9 +56,6 @@ function inline(file, options) {
 
 // ----------------------
 // Utils
-function hasTrailingComa (line) {
-  return line.slice(-1) === ',';
-}
 function trimTrailingLineBreak(tpl) {
   var lines = tpl.split('\n');
   return (lines.pop() === '' ? lines.splice(-1, 1).join('\n') : tpl);
