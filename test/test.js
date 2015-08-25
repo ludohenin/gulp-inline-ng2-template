@@ -67,9 +67,9 @@ describe('gulp-inline-ng2-template', function () {
   });
 
   it('should work with multiple lines', function (done) {
-    var res = "@View({\ntemplate: `<h1>Test template</h1>`,\ndirective: [NgIf]})";
+    var res = "@View({\ntemplate: `<p>\n  test\n</p>\n<p>\n  test\n</p>`,\ndirective: [NgIf]})";
     var jsFile = new File({
-      contents: new Buffer("@View({\ntemplateUrl: 'template.html',\ndirective: [NgIf]})")
+      contents: new Buffer("@View({\ntemplateUrl: 'multi-line.html',\ndirective: [NgIf]})")
     });
 
     var stream = inline(inlinerOptions);

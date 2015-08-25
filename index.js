@@ -64,5 +64,6 @@ function replace(line, tpl, options) {
 }
 function trimTrailingLineBreak(tpl) {
   var lines = tpl.split('\n');
-  return (lines.pop() === '' ? lines.splice(-1, 1).join('\n') : tpl);
+  // var trim = lines.splice(-1, 1);
+  return (lines.pop() === '' ? lines.join('\n') : tpl);
 }
