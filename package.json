@@ -1,6 +1,6 @@
 {
   "name": "gulp-inline-ng2-template",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Gulp plugin to inline html templates into Angular 2 component views",
   "repository": "https://github.com/ludohenin/gulp-inline-ng2-template.git",
   "main": "index.js",
