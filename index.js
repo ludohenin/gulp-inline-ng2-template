@@ -15,6 +15,16 @@ module.exports = exports = function (options) {
   options = extend({}, defaults, options || {});
 
   return through.obj(function (file, enc, cb) {
+    if (file.isNull()) {
+      cb(null, file);
+      return;
+    }
+
+    if (file.isStream()) {
+      cb(new gutil.PluginError('gulp-ng2-inline-template', 'Streaming not supported'));
+      return;
+    }
+
     try {
       file.contents = new Buffer(inline(file.contents.toString(), options));
       this.push(file);
