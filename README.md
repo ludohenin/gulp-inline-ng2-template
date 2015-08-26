@@ -6,7 +6,7 @@ This is very convenient to unit test your component or bundle your components/ap
 
 #Installation
 ```bash
-npm install gulp-inline-ng2-template --save
+npm install gulp-inline-ng2-template --save-dev
 ```
 
 #Configuration
