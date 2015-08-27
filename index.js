@@ -1,4 +1,5 @@
 'use strict';
+var compile = require('es6-templates').compile;
 var extend = require('extend');
 var fs = require('fs');
 var gutil = require('gulp-util');
@@ -9,7 +10,8 @@ module.exports = exports = function (options) {
   var defaults = {
     base: '/',
     extension: '.html',
-    quote: "'"
+    quote: "'",
+    target: 'es6'
   };
 
   options = extend({}, defaults, options || {});
@@ -51,7 +53,7 @@ function inline(file, options) {
       var tplAbsPath = join(process.cwd(), options.base, tplPath);
       var tpl = fs.readFileSync(tplAbsPath, 'utf8');
 
-      lines[i] = replace(line, tpl, options);
+      lines[i] = replace(line, tpl, options);;
     }
   });
 
@@ -66,11 +68,18 @@ function inline(file, options) {
 function replace(line, tpl, options) {
   var re = new RegExp('(' + TEMPLATE_URL + '.*' + options.quote + ')');
   var match = re.exec(line)[0];
-  var newLine = line.replace(match, TEMPLATE +
-                                    ': `' +
-                                    trimTrailingLineBreak(tpl) +
-                                    '`');
+  var newLine = line.replace(match, TEMPLATE + ': ' + getTemplateString(tpl, options));
   return newLine;
+}
+function getTemplateString(tpl, options) {
+  var string =  '`' +
+                trimTrailingLineBreak(tpl) +
+                '`';
+  if (options.target === 'es5') {
+    string = compile(string);
+  }
+
+  return string;
 }
 function trimTrailingLineBreak(tpl) {
   var lines = tpl.split('\n');
