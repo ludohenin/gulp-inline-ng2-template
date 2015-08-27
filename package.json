@@ -9,15 +9,17 @@
     "test-w": "node_modules/.bin/mocha -w"
   },
   "keywords": [
+    "angular2",
+    "template",
     "gulp",
     "typescript",
     "es6",
-    "angular2",
-    "template"
+    "es5"
   ],
   "author": "ludohenin <ludovic.henin@yahoo.com>",
   "license": "MIT",
   "dependencies": {
+  "es6-templates": "~0.2.2",
     "extend": "~3.0.0",
     "gulp-util": "~3.0.6",
     "through2": "~2.0.0"

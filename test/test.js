@@ -1,5 +1,6 @@
 'use strict';
 var assert = require('assert');
+var extend = require('extend');
 var inline = require('../');
 var fs = require('fs');
 var File = require('vinyl');
@@ -19,7 +20,7 @@ describe('gulp-inline-ng2-template', function () {
     var stream = inline(inlinerOptions);
     stream.write(jsFile);
     stream.once('data', function(file) {
-      assert.equal(file.contents.toString(), result.toString());
+      assert.equal(file.contents.toString(), result);
       done();
     });
   });
@@ -33,7 +34,7 @@ describe('gulp-inline-ng2-template', function () {
     var stream = inline(inlinerOptions);
     stream.write(jsFile);
     stream.once('data', function(file) {
-      assert.equal(file.contents.toString(), res.toString());
+      assert.equal(file.contents.toString(), res);
       done();
     });
   });
@@ -47,7 +48,7 @@ describe('gulp-inline-ng2-template', function () {
     var stream = inline(inlinerOptions);
     stream.write(jsFile);
     stream.once('data', function(file) {
-      assert.equal(file.contents.toString(), res.toString());
+      assert.equal(file.contents.toString(), res);
       done();
     });
   });
@@ -61,7 +62,7 @@ describe('gulp-inline-ng2-template', function () {
     var stream = inline(inlinerOptions);
     stream.write(jsFile);
     stream.once('data', function(file) {
-      assert.equal(file.contents.toString(), res.toString());
+      assert.equal(file.contents.toString(), res);
       done();
     });
   });
@@ -75,7 +76,7 @@ describe('gulp-inline-ng2-template', function () {
     var stream = inline(inlinerOptions);
     stream.write(jsFile);
     stream.once('data', function(file) {
-      assert.equal(file.contents.toString(), res.toString());
+      assert.equal(file.contents.toString(), res);
       done();
     });
   });
@@ -89,24 +90,49 @@ describe('gulp-inline-ng2-template', function () {
     var stream = inline(inlinerOptions);
     stream.write(jsFile);
     stream.once('data', function(file) {
-      assert.equal(file.contents.toString(), res.toString());
+      assert.equal(file.contents.toString(), res);
+      done();
+    });
+  });
+
+  it('should output es5 string when options.target = "es5"', function (done) {
+    var options = extend({}, inlinerOptions, {
+      target: 'es5'
+    });
+
+    var res = '@View({template: "<p>\n  test\n</p>\n<p>\n  test\n</p>", directive: [NgIf]})';
+    var jsFile = new File({
+      contents: new Buffer("@View({templateUrl: 'multi-line.html?version=1.0.0&ng=2', directive: [NgIf]})")
+    });
+
+    var stream = inline(options);
+    stream.write(jsFile);
+    stream.once('data', function(file) {
+      assert.equal(file.contents.toString(), inlineFile(res));
       done();
     });
   });
 
   it('should work with options', function () {
-    inlinerOptions.quote = '"';
-    inlinerOptions.extension = '.htm';
+    var options = extend({}, inlinerOptions, {
+      quote: '"',
+      extension: '.htm'
+    });
 
     var jsFile = new File({
       contents: new Buffer('templateUrl: "template.htm",')
     });
 
-    var stream = inline(inlinerOptions);
+    var stream = inline(options);
     stream.write(jsFile);
     stream.once('data', function(file) {
-      assert.equal(file.contents.toString(), result.toString());
+      assert.equal(file.contents.toString(), result);
       done();
     });
   });
 });
+
+
+function inlineFile(file) {
+  return file.split('\n').join("\\n");
+}
