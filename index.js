@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 var compile = require('es6-templates').compile;
 var extend = require('extend');
 var fs = require('fs');
@@ -40,7 +40,7 @@ module.exports = exports = function (options) {
 
 
 var TEMPLATE_URL = 'templateUrl';
-var TEMPLATE = 'template'
+var TEMPLATE = 'template';
 
 function inline(file, options) {
   var lines = file.split('\n');
@@ -53,7 +53,7 @@ function inline(file, options) {
       var tplAbsPath = join(process.cwd(), options.base, tplPath);
       var tpl = fs.readFileSync(tplAbsPath, 'utf8');
 
-      lines[i] = replace(line, tpl, options);;
+      lines[i] = replace(line, tpl, options);
     }
   });
 

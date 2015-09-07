@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 var assert = require('assert');
 var extend = require('extend');
 var inline = require('../');
@@ -113,7 +113,7 @@ describe('gulp-inline-ng2-template', function () {
     });
   });
 
-  it('should work with options', function () {
+  it('should work with options', function (done) {
     var options = extend({}, inlinerOptions, {
       quote: '"',
       extension: '.htm'
