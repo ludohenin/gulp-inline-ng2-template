@@ -14,7 +14,7 @@ module.exports = exports = function inline(options) {
     }
 
     if (file.isStream()) {
-      cb(new gutil.PluginError('gulp-ng2-inline-template', 'Streaming not supported'));
+      cb(new gutil.PluginError(PLUGIN_NAME, 'Streaming not supported'));
       return;
     }
 
@@ -22,7 +22,7 @@ module.exports = exports = function inline(options) {
       file.contents = new Buffer(require('./parser')(file.contents.toString(), options));
       this.push(file);
     } catch (err) {
-      this.emit('error', new gutil.PluginError('gulp-ng2-inline-template', err, {fileName: file.path}));
+      this.emit('error', new gutil.PluginError(PLUGIN_NAME, err, {fileName: file.path}));
     }
 
     cb();
