@@ -1,4 +1,4 @@
-#gulp-inline-ng2-template
+# gulp-inline-ng2-template
 
 Inline Angular2 HTML and CSS files into JavaScript ES5/ES6 and TypeScript files (and possibly more - not tested).
 This plugin uses the [ES6 template strings](https://github.com/lukehoban/es6features#template-strings) syntax by default _(which requires the use of a transpiler -typescript, babel, traceur- to produce valid ES5 files)_ but you can opt-in for ES5 one.
@@ -7,13 +7,13 @@ Very convenient to unit test your component or bundle your components/applicatio
 
 __note:__ 0.0.6 adds support to style sheets
 
-#Installation
+# Installation
 
 ```bash
 npm install gulp-inline-ng2-template --save
 ```
 
-#Configuration
+# Configuration
 
 You can pass a configuration object to the plugin.
 ```javascript
@@ -27,7 +27,7 @@ defaults = {
 ```
 _HTML extension is currently hard coded to .html_
 
-#Example usage
+# Example usage
 
 ```javascript
 //...
@@ -41,7 +41,7 @@ return result.js
   .pipe(gulp.dest(PATH.dest));
 ```
 
-#How it works
+# How it works
 
 __app.html__
 ```html
@@ -89,7 +89,7 @@ import {Component, View} from 'angular2/angular2';
 class Hello {}
 ```
 
-#Test
+# Test
 
 ```bash
 git clone https://github.com/ludohenin/gulp-inline-ng2-template
@@ -98,6 +98,6 @@ npm install
 npm run test-dev
 ```
 
-#Licence
+# Licence
 
 MIT
