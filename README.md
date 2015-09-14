@@ -1,17 +1,16 @@
-[![Dependency Status](http://img.shields.io/david/ludohenin/gulp-inline-ng2-template.svg?style=flat-square)](https://david-dm.org/ludohenin/gulp-inline-ng2-template)
-[![DevDependencies Status](http://img.shields.io/david/dev/ludohenin/gulp-inline-ng2-template.svg?style=flat-square)](https://david-dm.org/ludohenin/gulp-inline-ng2-template#info=devDependencies)
-
 #gulp-inline-ng2-template
 
-Inline Angular2 template file into JavaScript ES5/ES6 and TypeScript files (and possibly more - not tested).
+Inline Angular2 HTML and CSS files into JavaScript ES5/ES6 and TypeScript files (and possibly more - not tested).
 This plugin uses the [ES6 template strings](https://github.com/lukehoban/es6features#template-strings) syntax by default _(which requires the use of a transpiler -typescript, babel, traceur- to produce valid ES5 files)_ but you can opt-in for ES5 one.
 
-This is very convenient to unit test your component or bundle your components/application (avoid extra HTTP request and keeps your source clean).
+Very convenient to unit test your component or bundle your components/application (avoid extra HTTP request and keeps your source clean).
+
+__note:__ 0.0.6 adds support to style sheets
 
 #Installation
 
 ```bash
-npm install gulp-inline-ng2-template --save-dev
+npm install gulp-inline-ng2-template --save
 ```
 
 #Configuration
@@ -20,11 +19,13 @@ You can pass a configuration object to the plugin.
 ```javascript
 defaults = {
   base: '/',          // Angular2 application base folder
-  extension: '.html', // Template file extension
-  quote: "'",         // Angular2 component config object property wrapping quote
+  html: true,         // Process .html files
+  css: true,          // Process .css files
   target: 'es6'       // Can swap to es5
+  indent: 2           // Indentation (spaces)
 };
 ```
+_HTML extension is currently hard coded to .html_
 
 #Example usage
 
@@ -42,25 +43,59 @@ return result.js
 
 #How it works
 
-__template.html__
+__app.html__
 ```html
-<h1>Hello {{ world }}</h1>
+<p>
+  Hello {{ world }}
+</p>
 ```
 
-__component.ts__
+__app.css__
+```css
+.hello {
+  color: red;
+}
+```
+
+__app.ts__
 ```javascript
 import {Component, View} from 'angular2/angular2';
 @Component({ selector: 'hello' })
-@View({ templateUrl: './template.html'})
+@View({
+  templateUrl: './app.html',
+  styleUrls: ['./app.css'],
+  directives: [CORE_DIRECTIVES]
+})
 class Hello {}
 ```
 
-__result (component.ts)__
+__result (app.ts)__
 ```javascript
 import {Component, View} from 'angular2/angular2';
-@Component({ selector: 'hello' })
-@View({ template: `<h1>Hello {{ world }}</h1>`})
+@Component({ selector: 'app' })
+@View({
+  template: `
+    <p>
+      Hello {{ world }}
+    </p>
+  `,
+  styles: [`
+    .hello {
+      color: red;
+    }
+  `],
+  directives: [CORE_DIRECTIVES]
+})
 class Hello {}
+```
+
+#Test
+
+```bash
+git clone https://github.com/ludohenin/gulp-inline-ng2-template
+cd gulp-inline-ng2-template
+npm install
+npm run test-dev
 ```
 
 #Licence

@@ -1,1 +1,0 @@
-<h1>Test template</h1>
