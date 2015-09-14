@@ -83,3 +83,14 @@ export class App {}
 @View({ templateUrl: './app.html',
   styleUrls: ['./app.css', './common.css'], directives: [CORE_DIRECTIVES] })
 export class App {}
+
+// TEST_9
+@Component({
+  selector: 'app'
+})
+@View({
+  templateUrl: './app.html',
+  styleUrls: ['./app.css'],
+  directives: [CORE_DIRECTIVES]
+})
+export class App {}

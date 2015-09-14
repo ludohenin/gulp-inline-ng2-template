@@ -177,3 +177,24 @@ export class App {}
     }
   `], directives: [CORE_DIRECTIVES] })
 export class App {}
+
+// TEST_9
+@Component({
+  selector: 'app'
+})
+@View({
+  template: `
+    <h1>Test</h1>
+
+    <p>
+      Test
+    </p>
+  `,
+  styles: [`
+    .test {
+      color: red;
+    }
+  `],
+  directives: [CORE_DIRECTIVES]
+})
+export class App {}
