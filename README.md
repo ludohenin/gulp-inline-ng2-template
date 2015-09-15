@@ -98,6 +98,12 @@ npm install
 npm run test-dev
 ```
 
+# Todo
+
+- [ ] Append styles into `styles` View config property if it exist
+- [ ] Add support for source maps
+- [ ] Configure html files extension and quote/double string wrapper
+
 # Licence
 
 MIT
