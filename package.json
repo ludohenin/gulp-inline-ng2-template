@@ -11,6 +11,7 @@
   "keywords": [
     "angular2",
     "template",
+    "styles",
     "gulp",
     "typescript",
     "es6",
@@ -29,7 +30,6 @@
   "devDependencies": {
     "mocha": "~2.2.5",
     "vinyl": "~0.5.1",
-    "color": "~0.10.1",
-    "yargs": "~3.25.0"
+    "color": "~0.10.1"
   }
 }
