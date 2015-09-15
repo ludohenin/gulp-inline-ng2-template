@@ -197,17 +197,61 @@ import {NamesList} from './services/NameList';
 ])
 @View({
   template: `
-    <h1>Test</h1>
+    <section class="sample-app-content">
+      <nav>
+        <a [router-link]="['/home']">Home</a>
+        <a [router-link]="['/about']">About</a>
+      </nav>
 
-    <p>
-      Test
-    </p>
+      <router-outlet></router-outlet>
+    </section>
   `,
   styles: [`
-    .test {
-      color: red;
+    .sample-app-content {
+      font-family: Verdana;
+    }
+    .sample-app-content h1 {
+      color: #999999;
+      font-size: 3em;
+    }
+    .sample-app-content h2 {
+      color: #990000;
+      font-size: 2em;
+    }
+    .sample-app-content p,
+    .sample-app-content nav {
+      padding: 30px;
+    }
+    .sample-app-content li,
+    .sample-app-content p {
+      font-size: 1.2em;
+    }
+    .sample-app-content li {
+      font-family: Consolas;
+    }
+    .sample-app-content nav a {
+      display: inline-block;
+      margin-right: 15px;
+    }
+    .sample-app-content input,
+    .sample-app-content button {
+      padding: 5px;
+      font-size: 1em;
+      outline: none;
     }
   `],
   directives: [CORE_DIRECTIVES]
 })
 export class App {}
+
+// Test 10
+export class App {
+  array = [1,2,3,4,5];
+
+  get() {
+    return this.array;
+  }
+  add(value) {
+    this.array.push(value);
+  }
+}

@@ -10,7 +10,7 @@ __note:__ 0.0.6 adds support to style sheets
 # Installation
 
 ```bash
-npm install gulp-inline-ng2-template --save
+npm install gulp-inline-ng2-template --save-dev
 ```
 
 # Configuration

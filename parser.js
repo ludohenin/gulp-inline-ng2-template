@@ -40,7 +40,7 @@ var CSSOptions = {
 
 module.exports = function parser(file, options) {
   var opts = extend({}, defaults, (options || {}));
-  var lines = file.split('\n');
+  var lines = file.replace(/\r/g, '').split('\n');
   var start_line_idx, end_line_idx, frag;
 
   if (opts.html) {
@@ -61,7 +61,7 @@ module.exports = function parser(file, options) {
     for(var i = 0; i < lines.length; i++) {
       var line = lines[i];
       getIndexes(line, i);
-      if (i === end_line_idx) {
+      if (i === end_line_idx && start_line_idx) {
         getFragment();
         replaceFrag();
       }
@@ -110,7 +110,7 @@ module.exports = function parser(file, options) {
     var assetFiles  = '';
 
     urls.forEach(function (url) {
-      assetFiles += (getFile(url));
+      assetFiles += getFile(url);
     });
 
     // Trim trailing line breaks.
@@ -137,7 +137,7 @@ module.exports = function parser(file, options) {
 
     function getFile(filepath) {
       var absPath = join(process.cwd(), opts.base, filepath);
-      return fs.readFileSync(absPath).toString();
+      return fs.readFileSync(absPath).toString().replace(/\r/g, '');
     }
     function indent(str) {
       var lines = [];

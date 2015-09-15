@@ -102,8 +102,20 @@ import {NamesList} from './services/NameList';
   { path: '/about', component: About, as: 'about' }
 ])
 @View({
-  templateUrl: './app.html',
-  styleUrls: ['./app.css'],
+  templateUrl: './app2.html',
+  styleUrls: ['./app2.css'],
   directives: [CORE_DIRECTIVES]
 })
 export class App {}
+
+// Test 10
+export class App {
+  array = [1,2,3,4,5];
+
+  get() {
+    return this.array;
+  }
+  add(value) {
+    this.array.push(value);
+  }
+}
