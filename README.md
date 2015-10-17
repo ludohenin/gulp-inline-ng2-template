@@ -36,7 +36,7 @@ _HTML extension is currently hard coded to .html_
 //...
 var inlineNg2Template = require('gulp-inline-ng2-template');
 
-var result = gulp.src('./app/**/*ts')
+var result = gulp.src('./app/**/*.ts')
   .pipe(inlineNg2Template({ base: '/app' }))
   .pipe(tsc());
 
@@ -63,13 +63,13 @@ __app.css__
 __app.ts__
 ```javascript
 import {Component, View} from 'angular2/angular2';
-@Component({ selector: 'hello' })
+@Component({ selector: 'app' })
 @View({
   templateUrl: './app.html',
   styleUrls: ['./app.css'],
   directives: [CORE_DIRECTIVES]
 })
-class Hello {}
+class AppCmp {}
 ```
 
 __result (app.ts)__
@@ -89,7 +89,7 @@ import {Component, View} from 'angular2/angular2';
   `],
   directives: [CORE_DIRECTIVES]
 })
-class Hello {}
+class AppCmp {}
 ```
 
 # Test
@@ -106,6 +106,7 @@ npm run test-dev
 - [ ] Append styles into `styles` View config property if it exist
 - [ ] Add support for source maps
 - [ ] Configure html files extension and quote/double string wrapper
+- [ ] Add option `skipCommented`
 
 # Licence
 
