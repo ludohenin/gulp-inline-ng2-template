@@ -1,0 +1,22 @@
+language: node_js
+
+node_js:
+  - "0.12"
+
+sudo: false
+
+services:
+
+before_install:
+
+before_script:
+
+notifications:
+  email: true
+
+after_failure: "cat /home/travis/build/mgechev/angular2-seed/npm-debug.log"
+
+# whitelisted branches
+branches:
+  only:
+    - master

@@ -5,8 +5,8 @@
   "repository": "https://github.com/ludohenin/gulp-inline-ng2-template.git",
   "main": "index.js",
   "scripts": {
-    "test": "node_modules/.bin/mocha",
-    "test-dev": "node_modules/.bin/mocha -w"
+    "test": "mocha",
+    "test-dev": "mocha -w"
   },
   "keywords": [
     "angular2",
