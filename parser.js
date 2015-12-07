@@ -64,7 +64,7 @@ module.exports = function parser(file, options) {
     reset();
   }
   if (opts.jade) {
-    extend(opts, JADEOptionsOptions);
+    extend(opts, JADEOptions);
     execute();
     reset();
   }
@@ -131,12 +131,15 @@ module.exports = function parser(file, options) {
     // Trim trailing line breaks.
     assetFiles = assetFiles.replace(/(\n*)$/, '');
 
+    if ('jade' === opts.type) {
+      assetFiles = jade.render(assetFiles);
+    }
+
     // Indent content.
     assetFiles = indent(assetFiles);
 
     // Build the final string.
-    if ('html' === opts.type)  assetFiles = opts.prop + ': `\n' + assetFiles + '\n' + indentation + '`';
-    if ('jade' === opts.type)  assetFiles = opts.prop + ': `\n' + jade.render(assetFiles) + '\n' + indentation + '`';
+    if ('html' === opts.type || 'jade' === opts.type)  assetFiles = opts.prop + ': `\n' + assetFiles + '\n' + indentation + '`';
     if ('css' === opts.type)   assetFiles = opts.prop + ': [`\n' + assetFiles + '\n' + indentation + '`]';
     if ('es5' === opts.target) assetFiles = compile(assetFiles);
 
