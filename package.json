@@ -25,7 +25,8 @@
     "gulp-util": "~3.0.6",
     "through2": "~2.0.0",
     "isarray": "0.0.1",
-    "clone": "~1.0.2"
+    "clone": "~1.0.2",
+    "jade": "~1.11.0"
   },
   "devDependencies": {
     "mocha": "~2.2.5",

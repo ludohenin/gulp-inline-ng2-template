@@ -4,6 +4,7 @@ var clone = require('clone');
 var compile = require('es6-templates').compile;
 var extend = require('extend');
 var fs = require('fs');
+var jade = require('jade');
 var isarray = require('isarray');
 var join = require('path').join;
 
@@ -28,6 +29,15 @@ var HTMLOptions = {
   oneliner_pattern: /templateUrl.*(\.html\s*'|\.html\s*")/
 };
 
+var JADEOptions = {
+  type: 'jade',
+  prop_url: 'templateUrl',
+  prop: 'template',
+  start_pattern: /templateUrl.*/,
+  end_pattern: /.*\.jade\s*'|.*\.jade\s*"/,
+  oneliner_pattern: /templateUrl.*(\.jade\s*'|\.jade\s*")/
+};
+
 var CSSOptions = {
   type: 'css',
   prop_url: 'styleUrls',
@@ -50,6 +60,11 @@ module.exports = function parser(file, options) {
   }
   if (opts.css) {
     extend(opts, CSSOptions);
+    execute();
+    reset();
+  }
+  if (opts.jade) {
+    extend(opts, JADEOptions);
     execute();
     reset();
   }
@@ -116,11 +131,15 @@ module.exports = function parser(file, options) {
     // Trim trailing line breaks.
     assetFiles = assetFiles.replace(/(\n*)$/, '');
 
+    if ('jade' === opts.type) {
+      assetFiles = jade.render(assetFiles);
+    }
+
     // Indent content.
     assetFiles = indent(assetFiles);
 
     // Build the final string.
-    if ('html' === opts.type)  assetFiles = opts.prop + ': `\n' + assetFiles + '\n' + indentation + '`';
+    if ('html' === opts.type || 'jade' === opts.type)  assetFiles = opts.prop + ': `\n' + assetFiles + '\n' + indentation + '`';
     if ('css' === opts.type)   assetFiles = opts.prop + ': [`\n' + assetFiles + '\n' + indentation + '`]';
     if ('es5' === opts.target) assetFiles = compile(assetFiles);
 
