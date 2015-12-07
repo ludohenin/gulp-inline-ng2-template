@@ -8,7 +8,10 @@ This plugin uses the [ES6 template strings](https://github.com/lukehoban/es6feat
 
 Very convenient to unit test your component or bundle your components/application (avoid extra HTTP request and keeps your source clean).
 
-__note:__ 0.0.6 adds support to style sheets
+__note:__
+
+* 0.0.8 adds Jade support (add `jade: true` to your config)
+* 0.0.6 adds support to style sheets
 
 # Installation
 
