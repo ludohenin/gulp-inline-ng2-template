@@ -141,7 +141,7 @@ module.exports = function parser(file, options) {
     // Build the final string.
     if ('html' === opts.type || 'jade' === opts.type)  assetFiles = opts.prop + ': `\n' + assetFiles + '\n' + indentation + '`';
     if ('css' === opts.type)   assetFiles = opts.prop + ': [`\n' + assetFiles + '\n' + indentation + '`]';
-    if ('es5' === opts.target) assetFiles = compile(assetFiles);
+    if ('es5' === opts.target) assetFiles = compile(assetFiles).code;
 
     // One liner.
     if (start_line_idx === end_line_idx) {
