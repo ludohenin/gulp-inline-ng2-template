@@ -19,7 +19,8 @@ module.exports = exports = function inline(options) {
     }
 
     try {
-      file.contents = new Buffer(require('./parser')(file.contents.toString(), options));
+      file.contents = new Buffer(require('./parser')(file, options));
+
       this.push(file);
     } catch (err) {
       this.emit('error', new gutil.PluginError(PLUGIN_NAME, err, {fileName: file.path}));
