@@ -168,7 +168,7 @@ module.exports = function parser(file, options) {
         absPath = join(process.cwd(), opts.base, filepath);
       }
 
-      return fs.readFileSync(absPath).toString().replace(/\r/g, '');
+      return fs.readFileSync(absPath).toString().replace(/\r/g, '').replace(/[\u200B-\u200D\uFEFF]/g, '');
     }
     function indent(str) {
       var lines = [];
