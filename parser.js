@@ -7,6 +7,7 @@ var fs = require('fs');
 var jade = require('jade');
 var isarray = require('isarray');
 var join = require('path').join;
+var dirname = require('path').dirname;
 
 
 // -----------------------------------------------------------------------------
@@ -17,7 +18,8 @@ var defaults = {
   css: true,
   // html_ext: 'html',
   target: 'es6',
-  indent: 2
+  indent: 2,
+  UseRelativePaths: false
 };
 
 var HTMLOptions = {
@@ -50,7 +52,7 @@ var CSSOptions = {
 
 module.exports = function parser(file, options) {
   var opts = extend({}, defaults, (options || {}));
-  var lines = file.replace(/\r/g, '').split('\n');
+  var lines = file.contents.toString().replace(/\r/g, '').split('\n');
   var start_line_idx, end_line_idx, frag;
 
   if (opts.html) {
@@ -155,8 +157,18 @@ module.exports = function parser(file, options) {
     }
 
     function getFile(filepath) {
-      var absPath = join(process.cwd(), opts.base, filepath);
-      return fs.readFileSync(absPath).toString().replace(/\r/g, '');
+
+      var absPath = '';
+      if (opts.UseRelativePaths)
+      {
+          absPath = join(dirname(file.path), filepath);
+      }
+      else
+      {
+        absPath = join(process.cwd(), opts.base, filepath);
+      }
+
+      return fs.readFileSync(absPath).toString().replace(/\r/g, '').replace(/[\u200B-\u200D\uFEFF]/g, '');
     }
     function indent(str) {
       var lines = [];
