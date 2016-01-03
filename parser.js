@@ -132,7 +132,7 @@ module.exports = function parser(file, options) {
     assetFiles = assetFiles.replace(/(\n*)$/, '');
 
     if ('jade' === opts.type) {
-      assetFiles = jade.render(assetFiles);
+      assetFiles = jade.render(assetFiles,{doctype: 'html'});
     }
 
     // Indent content.
