@@ -10,6 +10,7 @@ Very convenient to unit test your component or bundle your components/applicatio
 
 __note:__
 
+* 0.0.10 adds components relative asset paths support (see Configuration)
 * 0.0.8 adds Jade support (add `jade: true` to your config)
 * 0.0.6 adds support to style sheets
 
@@ -24,11 +25,12 @@ npm install gulp-inline-ng2-template --save-dev
 You can pass a configuration object to the plugin.
 ```javascript
 defaults = {
-  base: '/',          // Angular2 application base folder
-  html: true,         // Process .html files
-  css: true,          // Process .css files
-  target: 'es6'       // Can swap to es5
-  indent: 2           // Indentation (spaces)
+  base: '/',                  // Angular2 application base folder
+  html: true,                 // Process .html files
+  css: true,                  // Process .css files
+  target: 'es6',              // Can swap to es5
+  indent: 2,                  // Indentation (spaces)
+  useRelativePaths: false     // Use components relative assset paths
 };
 ```
 _HTML extension is currently hard coded to .html_
