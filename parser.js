@@ -19,7 +19,7 @@ var defaults = {
   // html_ext: 'html',
   target: 'es6',
   indent: 2,
-  UseRelativePaths: false
+  useRelativePaths: false
 };
 
 var HTMLOptions = {
@@ -158,17 +158,13 @@ module.exports = function parser(file, options) {
 
     function getFile(filepath) {
 
-      var absPath = '';
-      if (opts.UseRelativePaths)
-      {
-          absPath = join(dirname(file.path), filepath);
-      }
-      else
-      {
-        absPath = join(process.cwd(), opts.base, filepath);
-      }
+      var absPath = opts.useRelativePaths ? join(dirname(file.path), filepath)
+                                          : join(process.cwd(), opts.base, filepath);
 
-      return fs.readFileSync(absPath).toString().replace(/\r/g, '').replace(/[\u200B-\u200D\uFEFF]/g, '');
+      return fs.readFileSync(absPath)
+        .toString()
+        .replace(/\r/g, '')
+        .replace(/[\u200B-\u200D\uFEFF]/g, '');
     }
     function indent(str) {
       var lines = [];
