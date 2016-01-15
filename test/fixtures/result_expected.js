@@ -14,6 +14,9 @@
     .test {
       color: red;
     }
+    smile:before {
+      content: "\000B";
+    }
   `],
   directives: [CORE_DIRECTIVES]
 })
@@ -35,6 +38,9 @@ export class App {}
     .test {
       color: red;
     }
+    smile:before {
+      content: "\000B";
+    }
   `]
 })
 export class App {}
@@ -54,6 +60,9 @@ export class App {}
   styles: [`
     .test {
       color: red;
+    }
+    smile:before {
+      content: "\000B";
     }
     .common {
       color: grey;
@@ -79,11 +88,17 @@ export class App {}
     .test {
       color: red;
     }
+    smile:before {
+      content: "\000B";
+    }
     .common {
       color: grey;
     }
     .test {
       color: red;
+    }
+    smile:before {
+      content: "\000B";
     }
     .common {
       color: grey;
@@ -109,6 +124,9 @@ export class App {}
     .test {
       color: red;
     }
+    smile:before {
+      content: "\000B";
+    }
     .common {
       color: grey;
     }
@@ -131,6 +149,9 @@ export class App {}
   .test {
     color: red;
   }
+  smile:before {
+    content: "\000B";
+  }
   .common {
     color: grey;
   }
@@ -150,6 +171,9 @@ export class App {}
 `, styles: [`
   .test {
     color: red;
+  }
+  smile:before {
+    content: "\000B";
   }
   .common {
     color: grey;
@@ -171,6 +195,9 @@ export class App {}
   styles: [`
     .test {
       color: red;
+    }
+    smile:before {
+      content: "\000B";
     }
     .common {
       color: grey;

@@ -10,6 +10,9 @@
     .test {
       color: red;
     }
+    smile:before {
+      content: "\000B";
+    }
     .common {
       color: grey;
     }
