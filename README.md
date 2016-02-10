@@ -31,6 +31,7 @@ defaults = {
   target: 'es6',              // Can swap to es5
   indent: 2,                  // Indentation (spaces)
   useRelativePaths: false     // Use components relative assset paths
+  removeLineBreaks: false     // Content will be included as one line
 };
 ```
 _HTML extension is currently hard coded to .html_
