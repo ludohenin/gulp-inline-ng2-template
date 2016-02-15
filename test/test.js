@@ -37,6 +37,16 @@ describe('gulp-inline-ng2-template', function () {
 
     runTest(paths, { jade: true, useRelativePaths: true }, done);
   });
+
+  it('should work with default config and one line options', function (done) {
+    var paths = {
+      TEST_FILE      : './test/fixtures/templates.js',
+      RESULT_EXPECTED: './test/fixtures/result_expected_one_line.js',
+      RESULT_ACTUAL  : './test/fixtures/result_actual_one_line.js'
+    }
+
+    runTest(paths, { base: 'test/fixtures', removeLineBreaks: true }, done);
+  });
 });
 
 

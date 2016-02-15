@@ -19,7 +19,8 @@ var defaults = {
   // html_ext: 'html',
   target: 'es6',
   indent: 2,
-  useRelativePaths: false
+  useRelativePaths: false,
+  removeLineBreaks: false
 };
 
 var HTMLOptions = {
@@ -125,6 +126,8 @@ module.exports = function parser(file, options) {
     var line  = lines[start_line_idx];
     var indentation = /^\s*/.exec(line)[0];
     var assetFiles  = '';
+    var startOfInsertionBlock = '\n';
+    var endOfInsertionBlock = '\n';
 
     urls.forEach(function (url) {
       assetFiles += getFile(url);
@@ -137,12 +140,27 @@ module.exports = function parser(file, options) {
       assetFiles = jade.render(assetFiles,{doctype: 'html'});
     }
 
-    // Indent content.
-    assetFiles = indent(assetFiles);
+    // We don't need indentation if we are going to insert it as one line
+    if(!opts.removeLineBreaks)
+    {
+      // Indent content.
+      assetFiles = indent(assetFiles);
+    }
+
+    if(opts.removeLineBreaks)
+    {
+      assetFiles = removeLineBreaks(assetFiles);
+      // don't need the indentation
+      indentation = '';
+      startOfInsertionBlock = '';
+      endOfInsertionBlock = '';
+    }
 
     // Build the final string.
-    if ('html' === opts.type || 'jade' === opts.type)  assetFiles = opts.prop + ': `\n' + assetFiles + '\n' + indentation + '`';
-    if ('css' === opts.type)   assetFiles = opts.prop + ': [`\n' + assetFiles + '\n' + indentation + '`]';
+    if ('html' === opts.type || 'jade' === opts.type)
+      assetFiles = opts.prop + ': `' + startOfInsertionBlock + assetFiles + endOfInsertionBlock + indentation + '`';
+    if ('css' === opts.type)
+      assetFiles = opts.prop + ': [`' + startOfInsertionBlock + assetFiles + endOfInsertionBlock + indentation + '`]';
     if ('es5' === opts.target) assetFiles = compile(assetFiles).code;
 
     // One liner.
@@ -175,6 +193,10 @@ module.exports = function parser(file, options) {
         lines.push((/^(\s*)$/.test(line) ? '' : spaces) + line);
       });
       return lines.join('\n');
+    }
+
+    function removeLineBreaks(str) {
+      return str.replace(/(\r\n|\n|\r)/gm," ");
     }
   }
 
