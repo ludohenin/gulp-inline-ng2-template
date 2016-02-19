@@ -4,7 +4,6 @@ var clone = require('clone');
 var compile = require('es6-templates').compile;
 var extend = require('extend');
 var fs = require('fs');
-var jade = require('jade');
 var isarray = require('isarray');
 var join = require('path').join;
 var dirname = require('path').dirname;
@@ -14,40 +13,39 @@ var dirname = require('path').dirname;
 // Configuration.
 var defaults = {
   base: '/',
-  html: true,
-  css: true,
-  // html_ext: 'html',
   target: 'es6',
   indent: 2,
   useRelativePaths: false,
-  removeLineBreaks: false
+  removeLineBreaks: false,
+  templateExtension: '.html',
+  templateProcessor: defaultProcessor,
+  styleProcessor: defaultProcessor
 };
 
-var HTMLOptions = {
-  type: 'html',
-  prop_url: 'templateUrl',
-  prop: 'template',
-  start_pattern: /templateUrl.*/,
-  end_pattern: /.*\.html\s*'|.*\.html\s*"/,
-  oneliner_pattern: /templateUrl.*(\.html\s*'|\.html\s*")/
+function defaultProcessor(path, file) {
+  return file;
+}
+
+var htmlOptions = function (opts) {
+  return {
+    type: 'html',
+    prop_url: 'templateUrl',
+    prop: 'template',
+    start_pattern: /templateUrl.*/,
+    end_pattern: new RegExp('.*\\' + opts.templateExtension + '\s*\'|.*\\' + opts.templateExtension + '\s*"'),
+    oneliner_pattern: new RegExp('templateUrl.*(\\' + opts.templateExtension + '\s*\'|\\' + opts.templateExtension + 's*")')
+  };
 };
 
-var JADEOptions = {
-  type: 'jade',
-  prop_url: 'templateUrl',
-  prop: 'template',
-  start_pattern: /templateUrl.*/,
-  end_pattern: /.*\.jade\s*'|.*\.jade\s*"/,
-  oneliner_pattern: /templateUrl.*(\.jade\s*'|\.jade\s*")/
-};
-
-var CSSOptions = {
-  type: 'css',
-  prop_url: 'styleUrls',
-  prop: 'styles',
-  start_pattern: /styleUrls.*/,
-  end_pattern: /.*]/,
-  oneliner_pattern: /styleUrls(.*?)]/
+var cssOptions = function () {
+  return {
+    type: 'css',
+    prop_url: 'styleUrls',
+    prop: 'styles',
+    start_pattern: /styleUrls.*/,
+    end_pattern: /.*]/,
+    oneliner_pattern: /styleUrls(.*?)]/
+  };
 };
 
 
@@ -55,19 +53,18 @@ module.exports = function parser(file, options) {
   var opts = extend({}, defaults, (options || {}));
   var lines = file.contents.toString().replace(/\r/g, '').split('\n');
   var start_line_idx, end_line_idx, frag;
+  var HTML = false;
+  var CSS = false;
 
-  if (opts.html) {
-    extend(opts, HTMLOptions);
+  if (opts.templateProcessor) {
+    HTML = true;
+    extend(opts, htmlOptions(opts));
     execute();
     reset();
   }
-  if (opts.css) {
-    extend(opts, CSSOptions);
-    execute();
-    reset();
-  }
-  if (opts.jade) {
-    extend(opts, JADEOptions);
+  if (opts.styleProcessor) {
+    CSS = true;
+    extend(opts, cssOptions());
     execute();
     reset();
   }
@@ -130,25 +127,27 @@ module.exports = function parser(file, options) {
     var endOfInsertionBlock = '\n';
 
     urls.forEach(function (url) {
-      assetFiles += getFile(url);
+      var file = getFile(url);
+      var ext = /\.[0-9a-z]+$/i.exec(url);
+      if (HTML && opts.templateProcessor) {
+        file = opts.templateProcessor(ext, file);
+      }
+      if (CSS && opts.styleProcessor) {
+        file = opts.styleProcessor(ext, file);
+      }
+      assetFiles += file;
     });
 
     // Trim trailing line breaks.
     assetFiles = assetFiles.replace(/(\n*)$/, '');
 
-    if ('jade' === opts.type) {
-      assetFiles = jade.render(assetFiles,{doctype: 'html'});
-    }
-
     // We don't need indentation if we are going to insert it as one line
-    if(!opts.removeLineBreaks)
-    {
+    if(!opts.removeLineBreaks) {
       // Indent content.
       assetFiles = indent(assetFiles);
     }
 
-    if(opts.removeLineBreaks)
-    {
+    if(opts.removeLineBreaks) {
       assetFiles = removeLineBreaks(assetFiles);
       // don't need the indentation
       indentation = '';
@@ -157,7 +156,7 @@ module.exports = function parser(file, options) {
     }
 
     // Build the final string.
-    if ('html' === opts.type || 'jade' === opts.type)
+    if ('html' === opts.type)
       assetFiles = opts.prop + ': `' + startOfInsertionBlock + assetFiles + endOfInsertionBlock + indentation + '`';
     if ('css' === opts.type)
       assetFiles = opts.prop + ': [`' + startOfInsertionBlock + assetFiles + endOfInsertionBlock + indentation + '`]';
@@ -175,7 +174,6 @@ module.exports = function parser(file, options) {
     }
 
     function getFile(filepath) {
-
       var absPath = opts.useRelativePaths ? join(dirname(file.path), filepath)
                                           : join(process.cwd(), opts.base, filepath);
 
@@ -184,6 +182,7 @@ module.exports = function parser(file, options) {
         .replace(/\r/g, '')
         .replace(/[\u200B-\u200D\uFEFF]/g, '');
     }
+
     function indent(str) {
       var lines = [];
       var spaces = '';
@@ -204,5 +203,7 @@ module.exports = function parser(file, options) {
     start_line_idx = undefined;
     end_line_idx = undefined;
     frag = undefined;
+    HTML = false;
+    CSS = false;
   }
 };

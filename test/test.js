@@ -13,19 +13,9 @@ describe('gulp-inline-ng2-template', function () {
       TEST_FILE      : './test/fixtures/templates.js',
       RESULT_EXPECTED: './test/fixtures/result_expected.js',
       RESULT_ACTUAL  : './test/fixtures/result_actual.js'
-    }
+    };
 
     runTest(paths, { base: 'test/fixtures' }, done);
-  });
-
-  it('should work with Jade', function (done) {
-    var paths = {
-      TEST_FILE      : './test/fixtures/templates_jade.js',
-      RESULT_EXPECTED: './test/fixtures/result_expected_jade.js',
-      RESULT_ACTUAL  : './test/fixtures/result_actual_jade.js'
-    }
-
-    runTest(paths, { base: 'test/fixtures', jade: true }, done);
   });
 
   it('should work with relative paths', function (done) {
@@ -43,32 +33,54 @@ describe('gulp-inline-ng2-template', function () {
       TEST_FILE      : './test/fixtures/templates.js',
       RESULT_EXPECTED: './test/fixtures/result_expected_one_line.js',
       RESULT_ACTUAL  : './test/fixtures/result_actual_one_line.js'
-    }
+    };
 
     runTest(paths, { base: 'test/fixtures', removeLineBreaks: true }, done);
+  });
+
+  it('should work with templates and styles processors', function (done) {
+    var paths = {
+      TEST_FILE      : './test/fixtures/templates_processors.js',
+      RESULT_EXPECTED: './test/fixtures/result_expected_processors.js',
+      RESULT_ACTUAL  : './test/fixtures/result_actual_processors.js'
+    };
+
+    var OPTIONS = {
+      base: 'test/fixtures',
+      useRelative: true,
+      templateExtension: 'jade',
+      templateProcessor: function (path, file) {
+        return require('jade').render(file);
+      },
+      styleProcessor: function (path, file) {
+        return require('stylus').render(file);
+      }
+    };
+
+    runTest(paths, OPTIONS, done);
   });
 });
 
 
 
 function runTest(paths, pluginOptions, done) {
-    var jsFile = new File({
-      contents: new Buffer(fs.readFileSync(paths.TEST_FILE).toString()),
-      path: join(process.cwd(), 'test/fixtures/someSrcFile')
-    });
+  var jsFile = new File({
+    contents: new Buffer(fs.readFileSync(paths.TEST_FILE).toString()),
+    path: join(process.cwd(), 'test/fixtures/someSrcFile')
+  });
 
-    var stream = inline(pluginOptions);
-    stream.write(jsFile);
+  var stream = inline(pluginOptions);
+  stream.write(jsFile);
 
-    stream.once('data', function(file) {
-      var result = file.contents.toString();
-      // Save the result in a file.
-      fs.writeFileSync(paths.RESULT_ACTUAL, result, 'utf8');
+  stream.once('data', function(file) {
+    var result = file.contents.toString();
+    // Save the result in a file.
+    fs.writeFileSync(paths.RESULT_ACTUAL, result, 'utf8');
 
-      assert.equal(
-        result,
-        fs.readFileSync(paths.RESULT_EXPECTED).toString()
-      );
-      done();
-    });
+    assert.equal(
+      result,
+      fs.readFileSync(paths.RESULT_EXPECTED).toString()
+    );
+    done();
+  });
 }

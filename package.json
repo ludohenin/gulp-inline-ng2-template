@@ -25,12 +25,13 @@
     "gulp-util": "~3.0.6",
     "through2": "~2.0.0",
     "isarray": "0.0.1",
-    "clone": "~1.0.2",
-    "jade": "~1.11.0"
+    "clone": "~1.0.2"
   },
   "devDependencies": {
+    "color": "~0.10.1",
+    "jade": "^1.11.0",
     "mocha": "~2.2.5",
-    "vinyl": "~0.5.1",
-    "color": "~0.10.1"
+    "stylus": "^0.53.0",
+    "vinyl": "~0.5.1"
   }
 }
