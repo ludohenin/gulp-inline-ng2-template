@@ -4,21 +4,17 @@
 })
 @View({
   template: `
-    <h1>Test</h1>
-
-    <p>
-      Test
-    </p>
+    <h1>Test</h1><p>Test</p>
   `,
   styles: [`
     .test {
-      color: red;
+      color: #f00;
     }
     smile:before {
       content: "\000B";
     }
     .common {
-      color: grey;
+      color: #808080;
     }
   `],
   directives: [CORE_DIRECTIVES]

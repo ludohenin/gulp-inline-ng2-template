@@ -3,8 +3,8 @@
   selector: 'app'
 })
 @View({
-  templateUrl: './app.html',
-  styleUrls: ['./app.css', './common.css'],
+  templateUrl: './app.jade',
+  styleUrls: ['./app.stylus', './common.stylus'],
   directives: [CORE_DIRECTIVES]
 })
 export class App {}

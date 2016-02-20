@@ -10,8 +10,13 @@ Very convenient to unit test your component or bundle your components/applicatio
 
 __note:__
 
+* 1.0.0 - __Breaking changes__
+  * Add suppport for processors (templates & styles)
+  * Refactor configuration object (`html` and `css` prop dropped)
+  * Drop jade dependency and related config
+* 0.0.11 adds option to remove line breaks
 * 0.0.10 adds components relative asset paths support (see Configuration)
-* 0.0.8 adds Jade support (add `jade: true` to your config)
+* 0.0.8 adds Jade support (add `jade: true` to your config) => __dropped in 1.0.0__
 * 0.0.6 adds support to style sheets
 
 # Installation
@@ -26,15 +31,31 @@ You can pass a configuration object to the plugin.
 ```javascript
 defaults = {
   base: '/',                  // Angular2 application base folder
-  html: true,                 // Process .html files
-  css: true,                  // Process .css files
   target: 'es6',              // Can swap to es5
   indent: 2,                  // Indentation (spaces)
   useRelativePaths: false     // Use components relative assset paths
   removeLineBreaks: false     // Content will be included as one line
+  templateExtension: '.html', // Update according to your file extension
+  templatePreprocessor: function ...,
+  stylePreprocessor:  function ...
 };
 ```
-_HTML extension is currently hard coded to .html_
+
+## Preprocessors configuration
+
+```typescript
+/**
+ *  Processor function call signature and type return
+ *
+ * @Param{String}   file extension (type)
+ * @Param{String}   file content
+ * @Return{String}  returned file to be inlined
+ */
+function processor(ext, file) {
+  // sync implementation of your source files processing goes here ...
+  return file;
+}
+```
 
 # Example usage
 
@@ -111,7 +132,6 @@ npm run test-dev
 
 - [ ] Append styles into `styles` View config property if it exist
 - [ ] Add support for source maps
-- [ ] Configure html files extension and quote/double string wrapper
 - [ ] Add option `skipCommented`
 
 # Licence

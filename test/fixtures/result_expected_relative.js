@@ -4,7 +4,11 @@
 })
 @View({
   template: `
-    <h1>Test</h1><p>Test</p>
+    <h1>Test</h1>
+
+    <p>
+      Test
+    </p>
   `,
   styles: [`
     .test {

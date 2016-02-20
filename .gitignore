@@ -24,6 +24,11 @@ build/Release
 # https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git-
 node_modules
 
+# IDE config
+.vscode
+
 # Users Environment Variables
 .lock-wscript
 .tsdrc
+
+test/fixtures/result_actual_*
