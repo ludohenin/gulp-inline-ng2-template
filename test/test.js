@@ -5,6 +5,9 @@ var fs = require('fs');
 var File = require('vinyl');
 var inline = require('../index');
 var join = require('path').join;
+var viewFunction = function (path) {
+  return path;
+};
 
 
 describe('gulp-inline-ng2-template', function () {
@@ -36,6 +39,21 @@ describe('gulp-inline-ng2-template', function () {
     };
 
     runTest(paths, { base: 'test/fixtures', removeLineBreaks: true }, done);
+  });
+  
+  it('should work with default config and templateUrl as a function', function (done) {
+    var paths = {
+      TEST_FILE      : './test/fixtures/templates_function.js',
+      RESULT_EXPECTED: './test/fixtures/result_expected_function.js',
+      RESULT_ACTUAL  : './test/fixtures/result_actual_function.js'
+    };
+    
+    var OPTIONS = {
+      base: 'test/fixtures',
+      templateFunction: viewFunction
+    };
+
+    runTest(paths, OPTIONS, done);
   });
 
   it('should work with templates and styles processors', function (done) {
