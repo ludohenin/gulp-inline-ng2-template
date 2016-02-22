@@ -18,9 +18,14 @@ var defaults = {
   useRelativePaths: false,
   removeLineBreaks: false,
   templateExtension: '.html',
+  templateFunction: defaultFunction,
   templateProcessor: defaultProcessor,
   styleProcessor: defaultProcessor
 };
+
+function defaultFunction(path) {
+  return path;
+}
 
 function defaultProcessor(path, file) {
   return file;
@@ -118,7 +123,16 @@ module.exports = function parser(file, options) {
   }
 
   function replaceFrag() {
-    var _urls = eval('({' + frag + '})')[opts.prop_url];
+    var _urls;
+    var fnIndex = frag.indexOf('(');
+    if (fnIndex > -1 && opts.templateFunction) {
+      // using template function
+      // replace with opts.templateFunction
+      _urls = opts.templateFunction(frag.substring(fnIndex + 2, frag.length - 1));
+    } else {
+      _urls = eval('({' + frag + '})')[opts.prop_url];  
+    }
+    
     var urls  = isarray(_urls) ? _urls : [_urls];
     var line  = lines[start_line_idx];
     var indentation = /^\s*/.exec(line)[0];

@@ -36,6 +36,7 @@ defaults = {
   useRelativePaths: false     // Use components relative assset paths
   removeLineBreaks: false     // Content will be included as one line
   templateExtension: '.html', // Update according to your file extension
+  templateFunction: function ..., // If using a function instead of a string for `templateUrl`, pass a reference to that function here
   templatePreprocessor: function ...,
   stylePreprocessor:  function ...
 };
