@@ -36,7 +36,7 @@ defaults = {
   useRelativePaths: false     // Use components relative assset paths
   removeLineBreaks: false     // Content will be included as one line
   templateExtension: '.html', // Update according to your file extension
-  templateFunction: function ..., // If using a function instead of a string for `templateUrl`, pass a reference to that function here
+  templateFunction: false,    // If using a function instead of a string for `templateUrl`, pass a reference to that function here
   templatePreprocessor: function ...,
   stylePreprocessor:  function ...
 };
@@ -55,6 +55,23 @@ defaults = {
 function processor(ext, file) {
   // sync implementation of your source files processing goes here ...
   return file;
+}
+```
+
+## Template function
+
+Inside your component: `templateUrl: templateFunc('app.html')`
+
+```es6
+/**
+ *  Template function call signature and type return
+ *
+ * @Param{String}   filename
+ * @Return{String}  returned filename
+ */
+templateFunction: function (filename) {
+  // ...
+  return newFilename;
 }
 ```
 

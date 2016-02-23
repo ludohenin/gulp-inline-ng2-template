@@ -18,14 +18,10 @@ var defaults = {
   useRelativePaths: false,
   removeLineBreaks: false,
   templateExtension: '.html',
-  templateFunction: defaultFunction,
+  templateFunction: false,
   templateProcessor: defaultProcessor,
   styleProcessor: defaultProcessor
 };
-
-function defaultFunction(path) {
-  return path;
-}
 
 function defaultProcessor(path, file) {
   return file;
@@ -37,8 +33,8 @@ var htmlOptions = function (opts) {
     prop_url: 'templateUrl',
     prop: 'template',
     start_pattern: /templateUrl.*/,
-    end_pattern: new RegExp('.*\\' + opts.templateExtension + '\s*\'|.*\\' + opts.templateExtension + '\s*"'),
-    oneliner_pattern: new RegExp('templateUrl.*(\\' + opts.templateExtension + '\s*\'|\\' + opts.templateExtension + 's*")')
+    end_pattern: new RegExp('.*\\' + opts.templateExtension + '\s*(\'\\)|\')|.*\\' + opts.templateExtension + '\s*("\\)|")'),
+    oneliner_pattern: new RegExp('templateUrl.*(\\' + opts.templateExtension + '\s*(\'\\)|\')|\\' + opts.templateExtension + 's*("\\)|"))')
   };
 };
 
@@ -114,6 +110,8 @@ module.exports = function parser(file, options) {
       frag      = concatLines();
     }
 
+    console.log(frag);
+
     function concatLines() {
       var _lines = clone(lines);
       _lines[start_line_idx] = fragStart;
@@ -126,13 +124,14 @@ module.exports = function parser(file, options) {
     var _urls;
     var fnIndex = frag.indexOf('(');
     if (fnIndex > -1 && opts.templateFunction) {
-      // using template function
-      // replace with opts.templateFunction
-      _urls = opts.templateFunction(frag.substring(fnIndex + 2, frag.length - 1));
+      // Using template function.
+      _urls = opts.templateFunction(/'(.*)'/.exec(frag)[1]);
     } else {
-      _urls = eval('({' + frag + '})')[opts.prop_url];  
+      _urls = eval('({' + frag + '})')[opts.prop_url];
     }
-    
+
+    console.log(_urls);
+
     var urls  = isarray(_urls) ? _urls : [_urls];
     var line  = lines[start_line_idx];
     var indentation = /^\s*/.exec(line)[0];

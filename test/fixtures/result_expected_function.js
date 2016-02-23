@@ -9,7 +9,7 @@
     <p>
       Test
     </p>
-  `),
+  `,
   directives: [CORE_DIRECTIVES]
 })
 export class App {}
