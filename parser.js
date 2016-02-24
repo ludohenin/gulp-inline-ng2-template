@@ -110,8 +110,6 @@ module.exports = function parser(file, options) {
       frag      = concatLines();
     }
 
-    console.log(frag);
-
     function concatLines() {
       var _lines = clone(lines);
       _lines[start_line_idx] = fragStart;
@@ -129,8 +127,6 @@ module.exports = function parser(file, options) {
     } else {
       _urls = eval('({' + frag + '})')[opts.prop_url];
     }
-
-    console.log(_urls);
 
     var urls  = isarray(_urls) ? _urls : [_urls];
     var line  = lines[start_line_idx];
