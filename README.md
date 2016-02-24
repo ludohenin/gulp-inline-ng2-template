@@ -10,6 +10,7 @@ Very convenient to unit test your component or bundle your components/applicatio
 
 __note:__
 
+* 1.1.0 adds templateFunction when templateUrl is a function
 * 1.0.0 - __Breaking changes__
   * Add suppport for processors (templates & styles)
   * Refactor configuration object (`html` and `css` prop dropped)
