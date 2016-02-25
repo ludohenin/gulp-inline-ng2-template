@@ -31,4 +31,4 @@ node_modules
 .lock-wscript
 .tsdrc
 
-test/fixtures/result_actual_*
+test/fixtures/result_actual*
