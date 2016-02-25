@@ -38,8 +38,8 @@ defaults = {
   removeLineBreaks: false     // Content will be included as one line
   templateExtension: '.html', // Update according to your file extension
   templateFunction: false,    // If using a function instead of a string for `templateUrl`, pass a reference to that function here
-  templatePreprocessor: function ...,
-  stylePreprocessor:  function ...
+  templateProcessor: function ...,
+  styleProcessor:  function ...
 };
 ```
 
