@@ -149,6 +149,7 @@ npm run test-dev
 
 # Contributors
 
+![Contributors](https://webtask.it.auth0.com/api/run/wt-ludovic_henin-yahoo_com-0/contributors-list/ludohenin/gulp-inline-ng2-template.svg)
 
 # Todo
 
