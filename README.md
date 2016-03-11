@@ -147,6 +147,10 @@ npm install
 npm run test-dev
 ```
 
+# Contributors
+
+[![Contributors List](https://webtask.it.auth0.com/api/run/wt-ludovic_henin-yahoo_com-0/contributors/list.html?webtask_no_cache=1)](https://github.com/ludohenin/gulp-inline-ng2-template)
+
 # Todo
 
 - [ ] Append styles into `styles` View config property if it exist
