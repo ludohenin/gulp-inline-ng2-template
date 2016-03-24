@@ -32,7 +32,7 @@ var htmlOptions = function (opts) {
     type: 'html',
     prop_url: 'templateUrl',
     prop: 'template',
-    start_pattern: /templateUrl:.*/,
+    start_pattern: /templateUrl\s*:.*/,
     end_pattern: new RegExp('.*\\' + opts.templateExtension + '\s*(\'\\)|\')|.*\\' + opts.templateExtension + '\s*("\\)|")'),
     oneliner_pattern: new RegExp('templateUrl.*(\\' + opts.templateExtension + '\s*(\'\\)|\')|\\' + opts.templateExtension + 's*("\\)|"))')
   };
@@ -43,7 +43,7 @@ var cssOptions = function () {
     type: 'css',
     prop_url: 'styleUrls',
     prop: 'styles',
-    start_pattern: /styleUrls:.*/,
+    start_pattern: /styleUrls\s*:.*/,
     end_pattern: /.*]/,
     oneliner_pattern: /styleUrls(.*?)]/
   };
