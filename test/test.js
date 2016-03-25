@@ -40,14 +40,14 @@ describe('gulp-inline-ng2-template', function () {
 
     runTest(paths, { base: 'test/fixtures', removeLineBreaks: true }, done);
   });
-  
+
   it('should work with default config and templateUrl as a function', function (done) {
     var paths = {
       TEST_FILE      : './test/fixtures/templates_function.js',
       RESULT_EXPECTED: './test/fixtures/result_expected_function.js',
       RESULT_ACTUAL  : './test/fixtures/result_actual_function.js'
     };
-    
+
     var OPTIONS = {
       base: 'test/fixtures',
       templateFunction: viewFunction
@@ -76,6 +76,16 @@ describe('gulp-inline-ng2-template', function () {
     };
 
     runTest(paths, OPTIONS, done);
+  });
+
+  it('should work with templates and styles with backticks in them', function(done) {
+    var paths = {
+      TEST_FILE      : './test/fixtures/templates_unescaped.js',
+      RESULT_EXPECTED: './test/fixtures/result_expected_unescaped.js',
+      RESULT_ACTUAL  : './test/fixtures/result_actual_unescaped.js'
+    };
+
+    runTest(paths, { base: 'test/fixtures' }, done);
   });
 });
 

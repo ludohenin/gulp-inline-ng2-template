@@ -1,0 +1,7 @@
+.test {
+  color: red;
+}
+/* This is a comment with `backticks` in it. */
+smile:before {
+  content: "\000B";
+}
