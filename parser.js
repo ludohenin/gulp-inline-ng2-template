@@ -147,8 +147,8 @@ module.exports = function parser(file, options) {
       assetFiles += file;
     });
 
-    // Trim trailing line breaks.
-    assetFiles = assetFiles.replace(/(\n*)$/, '');
+    // Trim trailing line breaks and unescape any backtick characters present.
+    assetFiles = assetFiles.replace(/(\n*)$/, '').replace(/`/g, '\\`');
 
     // We don't need indentation if we are going to insert it as one line
     if(!opts.removeLineBreaks) {
