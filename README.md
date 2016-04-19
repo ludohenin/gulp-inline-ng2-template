@@ -39,7 +39,8 @@ defaults = {
   templateExtension: '.html', // Update according to your file extension
   templateFunction: false,    // If using a function instead of a string for `templateUrl`, pass a reference to that function here
   templateProcessor: function ...,
-  styleProcessor:  function ...
+  styleProcessor:  function ...,
+  supportNonExistentFiles: false // If html or css file do not exist just return empty content
 };
 ```
 
