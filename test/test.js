@@ -87,6 +87,16 @@ describe('gulp-inline-ng2-template', function () {
 
     runTest(paths, { base: 'test/fixtures' }, done);
   });
+  
+  it('should work when templateUrl and styleUrl files do not exist', function(done) {
+    var paths = {
+      TEST_FILE      : './test/fixtures/templates_nonexistent_files.js',
+      RESULT_EXPECTED: './test/fixtures/result_expected_nonexistent_files.js',
+      RESULT_ACTUAL  : './test/fixtures/result_actual_nonexistent_files.js'
+    };
+
+    runTest(paths, { supportNonExistentFiles: true }, done);
+  });
 });
 
 
