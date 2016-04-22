@@ -12,7 +12,7 @@
     "angular2",
     "template",
     "styles",
-    "gulp",
+    "gulpplugin",
     "typescript",
     "es6",
     "es5"
