@@ -3,6 +3,7 @@
 Inline Angular2 HTML and CSS files into JavaScript ES5/ES6 and TypeScript files (and possibly more - not tested).
 
 [![Build Status](https://travis-ci.org/ludohenin/gulp-inline-ng2-template.svg?branch=master)](https://travis-ci.org/ludohenin/gulp-inline-ng2-template)
+[![npm](https://img.shields.io/npm/dm/gulp-inline-ng2-template.svg?maxAge=2592000)](https://www.npmjs.com/package/gulp-inline-ng2-template)
 
 This plugin uses the [ES6 template strings](https://github.com/lukehoban/es6features#template-strings) syntax by default _(which requires the use of a transpiler -typescript, babel, traceur- to produce valid ES5 files)_ but you can opt-in for ES5 one.
 
@@ -10,6 +11,7 @@ Very convenient to unit test your component or bundle your components/applicatio
 
 __note:__
 
+* 1.1.4 adds `supportNonExistentFiles` option
 * 1.1.0 adds templateFunction when templateUrl is a function
 * 1.0.0 - __Breaking changes__
   * Add suppport for processors (templates & styles)
@@ -38,8 +40,8 @@ defaults = {
   removeLineBreaks: false     // Content will be included as one line
   templateExtension: '.html', // Update according to your file extension
   templateFunction: false,    // If using a function instead of a string for `templateUrl`, pass a reference to that function here
-  templateProcessor: function ...,
-  styleProcessor:  function ...,
+  templateProcessor: function (ext, file) {/* ... */},
+  styleProcessor: function (ext, file) {/* ... */},
   supportNonExistentFiles: false // If html or css file do not exist just return empty content
 };
 ```
