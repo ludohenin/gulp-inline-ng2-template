@@ -20,7 +20,8 @@ var defaults = {
   templateExtension: '.html',
   templateFunction: false,
   templateProcessor: defaultProcessor,
-  styleProcessor: defaultProcessor
+  styleProcessor: defaultProcessor,
+  supportNonExistentFiles: false
 };
 
 function defaultProcessor(path, file) {
@@ -186,6 +187,10 @@ module.exports = function parser(file, options) {
       var absPath = opts.useRelativePaths ? join(dirname(file.path), filepath)
                                           : join(process.cwd(), opts.base, filepath);
 
+      if(opts.supportNonExistentFiles && !fs.existsSync(absPath)) {
+        return '';  
+      }
+      
       return fs.readFileSync(absPath)
         .toString()
         .replace(/\r/g, '')
