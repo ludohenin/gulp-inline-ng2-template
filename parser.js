@@ -21,11 +21,16 @@ var defaults = {
   templateFunction: false,
   templateProcessor: defaultProcessor,
   styleProcessor: defaultProcessor,
+  customFilePath: defaultSytlePath,
   supportNonExistentFiles: false
 };
 
 function defaultProcessor(path, file) {
   return file;
+}
+
+function defaultSytlePath(path) {
+  return path;
 }
 
 var htmlOptions = function (opts) {
@@ -190,6 +195,8 @@ module.exports = function parser(file, options) {
       if(opts.supportNonExistentFiles && !fs.existsSync(absPath)) {
         return '';  
       }
+      
+      absPath = opts.customFilePath(absPath);
       
       return fs.readFileSync(absPath)
         .toString()
