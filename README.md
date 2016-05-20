@@ -22,13 +22,30 @@ __note:__
 * 0.0.8 adds Jade support (add `jade: true` to your config) => __dropped in 1.0.0__
 * 0.0.6 adds support to style sheets
 
-# Installation
+## TOC
+
+* [Installation](#installation)
+* [Configuration](#configuration)
+  * [Options](#options)
+  * [Processors configuration](#processor-configuration)
+  * [Template function](#template-function)
+* [Example usage](#example-usage)
+* [Browserify transform example](#browserify-transform-example)
+* [How it works](#How-it-works)
+* [Contribute](#contribute)
+* [Contributors](#contributors)
+* [Todo](#todo)
+* [Licence](#licence)
+
+## Installation
 
 ```bash
 npm install gulp-inline-ng2-template --save-dev
 ```
 
-# Configuration
+## Configuration
+
+### Options
 
 You can pass a configuration object to the plugin.
 ```javascript
@@ -46,7 +63,7 @@ defaults = {
 };
 ```
 
-## Preprocessors configuration
+### Processors configuration
 
 ```typescript
 /**
@@ -62,7 +79,7 @@ function processor(ext, file) {
 }
 ```
 
-## Template function
+### Template function
 
 Inside your component: `templateUrl: templateFunc('app.html')`
 
@@ -79,7 +96,7 @@ templateFunction: function (filename) {
 }
 ```
 
-# Example usage
+## Example usage
 
 ```javascript
 //...
@@ -93,7 +110,38 @@ return result.js
   .pipe(gulp.dest(PATH.dest));
 ```
 
-# How it works
+## Browserify transform example
+
+Example transform function to use with Browserify.
+
+```javascript
+// ng2inlinetransform.js
+var ng2TemplateParser = require('gulp-inline-ng2-template/parser');
+var through = require('through2');
+var options = {target: 'es5'};
+
+function (file) {
+  return through(function (buf, enc, next){
+    result = ng2TemplateParser({contents: buf, path: file}, options);
+    this.push(result);
+    next();
+  });
+}
+```
+
+```javascript
+// gulp task
+return browserify('main.ts', {} )
+  .add(config.angularApp.additionalFiles)
+  .plugin(require('tsify'), {target: 'es5'})
+  .transform('./ng2inlinetransform')
+  .bundle()
+  .pipe(gulp.dest(config.rootDirectory))
+```
+
+_Thanks to [@zsedem](https://github.com/zsedem)_
+
+## How it works
 
 __app.html__
 ```html
@@ -141,7 +189,7 @@ import {Component, View} from 'angular2/angular2';
 class AppCmp {}
 ```
 
-# Test
+## Contribute
 
 ```bash
 git clone https://github.com/ludohenin/gulp-inline-ng2-template
@@ -150,16 +198,16 @@ npm install
 npm run test-dev
 ```
 
-# Contributors
+## Contributors
 
 ![Contributors](https://webtask.it.auth0.com/api/run/wt-ludovic_henin-yahoo_com-0/contributors-list/ludohenin/gulp-inline-ng2-template.svg)
 
-# Todo
+## Todo
 
 - [ ] Append styles into `styles` View config property if it exist
 - [ ] Add support for source maps
 - [ ] Add option `skipCommented`
 
-# Licence
+## Licence
 
 MIT

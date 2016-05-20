@@ -13,6 +13,7 @@
     "template",
     "styles",
     "gulpplugin",
+    "browserify",
     "typescript",
     "es6",
     "es5"
