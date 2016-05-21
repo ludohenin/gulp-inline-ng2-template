@@ -28,6 +28,7 @@ __note:__
 * [Configuration](#configuration)
   * [Options](#options)
   * [Processors configuration](#processors-configuration)
+  * [Processor Examples](#processor-examples)
   * [Template function](#template-function)
 * [Example usage](#example-usage)
 * [Browserify transform example](#browserify-transform-example)
@@ -78,6 +79,31 @@ function processor(ext, file) {
   return file;
 }
 ```
+
+### Processor Examples
+
+Minify template file before inlining them
+
+```javascript
+import inlineTemplate from 'gulp-inline-ng2-template';
+import htmlMinifier from 'html-minifier';
+
+const pluginOptions = {
+  base: mySrcPath,
+  templateProcessor: minifyTemplate
+};
+
+function minifyTemplate(ext, file) {
+  return htmlMinifier.minify(file, {
+    collapseWhitespace: true,
+    caseSensitive: true,
+    removeComments: true,
+    removeRedundantAttributes: true
+  });
+}
+```
+
+_Credit [@lcrodriguez](https://github.com/lcrodriguez)_
 
 ### Template function
 
