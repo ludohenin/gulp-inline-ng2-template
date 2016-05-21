@@ -21,7 +21,7 @@ var defaults = {
   templateFunction: false,
   templateProcessor: defaultProcessor,
   styleProcessor: defaultProcessor,
-  customFilePath: defaultSytlePath,
+  customFilePath: defaultCustomFilePath,
   supportNonExistentFiles: false
 };
 
@@ -29,7 +29,7 @@ function defaultProcessor(path, file) {
   return file;
 }
 
-function defaultSytlePath(path) {
+function defaultCustomFilePath(ext, path) {
   return path;
 }
 
@@ -196,7 +196,8 @@ module.exports = function parser(file, options) {
         return '';  
       }
       
-      absPath = opts.customFilePath(absPath);
+      var ext = /\.[0-9a-z]+$/i.exec(absPath);
+      absPath = opts.customFilePath(ext, absPath);
       
       return fs.readFileSync(absPath)
         .toString()
