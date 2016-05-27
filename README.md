@@ -31,6 +31,7 @@ __note:__
   * [Processors configuration](#processors-configuration)
   * [Processor Examples](#processor-examples)
   * [Template function](#template-function)
+  * [CustomFilePath configuration](#customfilepath-configuration)
 * [Example usage](#example-usage)
 * [Browserify transform example](#browserify-transform-example)
 * [How it works](#how-it-works)
@@ -124,7 +125,7 @@ templateFunction: function (filename) {
 }
 ```
 
-## CustomFilePath configuration
+### CustomFilePath configuration
 
 ```typescript
 /**
