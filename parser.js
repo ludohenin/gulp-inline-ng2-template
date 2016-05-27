@@ -21,11 +21,16 @@ var defaults = {
   templateFunction: false,
   templateProcessor: defaultProcessor,
   styleProcessor: defaultProcessor,
+  customFilePath: defaultCustomFilePath,
   supportNonExistentFiles: false
 };
 
 function defaultProcessor(path, file) {
   return file;
+}
+
+function defaultCustomFilePath(ext, path) {
+  return path;
 }
 
 var htmlOptions = function (opts) {
@@ -190,6 +195,9 @@ module.exports = function parser(file, options) {
       if(opts.supportNonExistentFiles && !fs.existsSync(absPath)) {
         return '';  
       }
+      
+      var ext = /\.[0-9a-z]+$/i.exec(absPath);
+      absPath = opts.customFilePath(ext, absPath);
       
       return fs.readFileSync(absPath)
         .toString()
