@@ -67,11 +67,11 @@ describe('gulp-inline-ng2-template', function () {
       base: 'test/fixtures',
       useRelative: true,
       templateExtension: 'jade',
-      templateProcessor: function (path, file) {
-        return require('jade').render(file);
+      templateProcessor: function (path, file, cb) {
+        return cb(null, require('jade').render(file));
       },
-      styleProcessor: function (path, file) {
-        return require('stylus').render(file);
+      styleProcessor: function (path, file, cb) {
+        return cb(null, require('stylus').render(file));
       }
     };
 
@@ -87,7 +87,7 @@ describe('gulp-inline-ng2-template', function () {
 
     runTest(paths, { base: 'test/fixtures' }, done);
   });
-  
+
   it('should work when templateUrl and styleUrl files do not exist', function(done) {
     var paths = {
       TEST_FILE      : './test/fixtures/templates_nonexistent_files.js',

@@ -11,6 +11,10 @@ Very convenient to unit test your component or bundle your components/applicatio
 
 __note:__
 
+* 2.0.0 - __Breaking changes__
+  * Refactor the parser and make it async
+  * `templateProcessor` and `styleProcessor` now accept a callback as 3rd argument
+  * If you're not using the processor functions, everything will work as in 1.x.
 * 1.1.5 adds `customFilePath` option
 * 1.1.4 adds `supportNonExistentFiles` option
 * 1.1.0 adds templateFunction when templateUrl is a function
@@ -60,8 +64,8 @@ defaults = {
   removeLineBreaks: false     // Content will be included as one line
   templateExtension: '.html', // Update according to your file extension
   templateFunction: false,    // If using a function instead of a string for `templateUrl`, pass a reference to that function here
-  templateProcessor: function (ext, file) {/* ... */},
-  styleProcessor: function (ext, file) {/* ... */},
+  templateProcessor: function (ext, file, callback) {/* ... */},
+  styleProcessor: function (ext, file, callback) {/* ... */},
   customFilePath: function(ext, file) {/* ... */},
   supportNonExistentFiles: false // If html or css file do not exist just return empty content
 };
@@ -75,11 +79,12 @@ defaults = {
  *
  * @Param{String}   file extension (type)
  * @Param{String}   file content
- * @Return{String}  returned file to be inlined
+ * @Param{Function} callback function (err, result) => void
+ * @Return{void}
  */
-function processor(ext, file) {
-  // sync implementation of your source files processing goes here ...
-  return file;
+function processor(ext, file, cb) {
+  // sync OR async implementation of your source files processing goes here ...
+  cb(null, file);
 }
 ```
 
@@ -96,13 +101,19 @@ const pluginOptions = {
   templateProcessor: minifyTemplate
 };
 
-function minifyTemplate(ext, file) {
-  return htmlMinifier.minify(file, {
-    collapseWhitespace: true,
-    caseSensitive: true,
-    removeComments: true,
-    removeRedundantAttributes: true
-  });
+function minifyTemplate(ext, file, cb) {
+  try {
+    var minifiedFile = htmlMinifier.minify(file, {
+      collapseWhitespace: true,
+      caseSensitive: true,
+      removeComments: true,
+      removeRedundantAttributes: true
+    });
+    cb(null, minifiedFile);
+  }
+  catch (err) {
+    cb(err);
+  }
 }
 ```
 
