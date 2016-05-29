@@ -9,23 +9,26 @@ var PLUGIN_NAME = 'gulp-inline-ng2-template';
 module.exports = exports = function inline(options) {
   return through.obj(function (file, enc, cb) {
     if (file.isNull()) {
-      cb(null, file);
-      return;
+      return cb(null, file);
     }
 
     if (file.isStream()) {
-      cb(new gutil.PluginError(PLUGIN_NAME, 'Streaming not supported'));
-      return;
+      return cb(new gutil.PluginError(PLUGIN_NAME, 'Streaming not supported'));
     }
 
     try {
-      file.contents = new Buffer(require('./parser')(file, options));
+      var parse = require('./parser')(file, options);
+      var _this = this
 
-      this.push(file);
+      parse(function (err, contents) {
+        if (err) return cb(new gutil.PluginError(PLUGIN_NAME, err, {fileName: file.path}));
+        file.contents = new Buffer(contents);
+        _this.push(file);
+        cb();
+      });
+
     } catch (err) {
       this.emit('error', new gutil.PluginError(PLUGIN_NAME, err, {fileName: file.path}));
     }
-
-    cb();
   });
 };

@@ -1,5 +1,6 @@
 "use strict";
 
+var series = require('async').series;
 var clone = require('clone');
 var compile = require('es6-templates').compile;
 var extend = require('extend');
@@ -25,8 +26,8 @@ var defaults = {
   supportNonExistentFiles: false
 };
 
-function defaultProcessor(path, file) {
-  return file;
+function defaultProcessor(path, file, cb) {
+  return cb(null, file);
 }
 
 function defaultCustomFilePath(ext, path) {
@@ -63,31 +64,60 @@ module.exports = function parser(file, options) {
   var HTML = false;
   var CSS = false;
 
-  if (opts.templateProcessor) {
-    HTML = true;
-    extend(opts, htmlOptions(opts));
-    execute();
-    reset();
-  }
-  if (opts.styleProcessor) {
-    CSS = true;
-    extend(opts, cssOptions());
-    execute();
-    reset();
-  }
-
-  return lines.join('\n');
+  return function parse(done) {
+    series([
+      processTemplate,
+      processStyles
+    ], function () {
+      done(null, lines.join('\n'));
+    });
+  };
 
 
-  function execute() {
-    for(var i = 0; i < lines.length; i++) {
-      var line = lines[i];
-      getIndexes(line, i);
-      if (i === end_line_idx && start_line_idx) {
-        getFragment();
-        replaceFrag();
-      }
+  function processTemplate(done) {
+    if (opts.templateProcessor) {
+      HTML = true;
+      extend(opts, htmlOptions(opts));
+      execute(function () {
+        reset();
+        done(null);
+      });
     }
+  }
+
+  function processStyles(done) {
+    if (opts.styleProcessor) {
+      CSS = true;
+      extend(opts, cssOptions());
+      execute(function () {
+        reset();
+        done(null);
+      });
+    }
+  }
+
+  function execute(done) {
+    var seriesArray = [];
+
+    for(var i = 0; i < lines.length; i++) {
+      (function (i) {
+        seriesArray.push(function (cb) {
+          var idx = i;
+          var line = lines[idx];
+          getIndexes(line, idx);
+          if (i === end_line_idx && start_line_idx) {
+            series([
+              getFragment,
+              replaceFrag
+            ], cb);
+          } else {
+            cb(null);
+          }
+        });
+      }(i));
+    }
+
+    series(seriesArray, done);
   }
 
   function getIndexes(line, i) {
@@ -102,9 +132,9 @@ module.exports = function parser(file, options) {
       }
   }
 
-  function getFragment() {
+  function getFragment(cb) {
     var fragStart, fragEnd;
-    if (start_line_idx < 0 || end_line_idx < 0) return;
+    if (start_line_idx < 0 || end_line_idx < 0) return cb();
     // One liner.
     if (start_line_idx === end_line_idx) {
       frag = opts.oneliner_pattern.exec(lines[start_line_idx])[0];
@@ -116,6 +146,8 @@ module.exports = function parser(file, options) {
       frag      = concatLines();
     }
 
+    cb();
+
     function concatLines() {
       var _lines = clone(lines);
       _lines[start_line_idx] = fragStart;
@@ -124,7 +156,7 @@ module.exports = function parser(file, options) {
     }
   }
 
-  function replaceFrag() {
+  function replaceFrag(cb) {
     var _urls;
     var fnIndex = frag.indexOf('(');
     if (fnIndex > -1 && opts.templateFunction) {
@@ -141,51 +173,71 @@ module.exports = function parser(file, options) {
     var startOfInsertionBlock = '\n';
     var endOfInsertionBlock = '\n';
 
-    urls.forEach(function (url) {
-      var file = getFile(url);
-      var ext = /\.[0-9a-z]+$/i.exec(url);
-      if (HTML && opts.templateProcessor) {
-        file = opts.templateProcessor(ext, file);
+    series([
+      getFilesAndApplyCustomProcessor,
+      _replaceFrag
+    ], cb);
+
+    function _replaceFrag(cb) {
+      // Trim trailing line breaks and unescape any backtick characters present.
+      assetFiles = assetFiles.replace(/(\n*)$/, '').replace(/`/g, '\\`');
+
+      // We don't need indentation if we are going to insert it as one line
+      if(!opts.removeLineBreaks) {
+        // Indent content.
+        assetFiles = indent(assetFiles);
       }
-      if (CSS && opts.styleProcessor) {
-        file = opts.styleProcessor(ext, file);
+
+      if(opts.removeLineBreaks) {
+        assetFiles = removeLineBreaks(assetFiles);
+        // don't need the indentation
+        indentation = '';
+        startOfInsertionBlock = '';
+        endOfInsertionBlock = '';
       }
-      assetFiles += file;
-    });
 
-    // Trim trailing line breaks and unescape any backtick characters present.
-    assetFiles = assetFiles.replace(/(\n*)$/, '').replace(/`/g, '\\`');
+      // Build the final string.
+      if ('html' === opts.type)
+        assetFiles = opts.prop + ': `' + startOfInsertionBlock + assetFiles + endOfInsertionBlock + indentation + '`';
+      if ('css' === opts.type)
+        assetFiles = opts.prop + ': [`' + startOfInsertionBlock + assetFiles + endOfInsertionBlock + indentation + '`]';
+      if ('es5' === opts.target) assetFiles = compile(assetFiles).code;
 
-    // We don't need indentation if we are going to insert it as one line
-    if(!opts.removeLineBreaks) {
-      // Indent content.
-      assetFiles = indent(assetFiles);
+      // One liner.
+      if (start_line_idx === end_line_idx) {
+        lines[start_line_idx] = line.replace(opts.oneliner_pattern, assetFiles);
+      }
+      // One or more lines.
+      if (start_line_idx < end_line_idx) {
+        if (/(,)$/.test(lines[end_line_idx])) assetFiles += ',';
+        lines[start_line_idx] = line.replace(opts.start_pattern, assetFiles);
+        lines.splice(start_line_idx + 1, end_line_idx - start_line_idx);
+      }
+
+      cb(null);
     }
 
-    if(opts.removeLineBreaks) {
-      assetFiles = removeLineBreaks(assetFiles);
-      // don't need the indentation
-      indentation = '';
-      startOfInsertionBlock = '';
-      endOfInsertionBlock = '';
-    }
+    function getFilesAndApplyCustomProcessor(cb) {
+      series(urls.map(function (url) {
+        return function (cb) {
+          var file = getFile(url);
+          var ext = /\.[0-9a-z]+$/i.exec(url);
+          if (HTML && opts.templateProcessor) {
+            opts.templateProcessor(ext, file, customProcessorCallback(cb));
+          }
+          if (CSS && opts.styleProcessor) {
+            opts.styleProcessor(ext, file, customProcessorCallback(cb));
+          }
+        };
+      }), cb);
 
-    // Build the final string.
-    if ('html' === opts.type)
-      assetFiles = opts.prop + ': `' + startOfInsertionBlock + assetFiles + endOfInsertionBlock + indentation + '`';
-    if ('css' === opts.type)
-      assetFiles = opts.prop + ': [`' + startOfInsertionBlock + assetFiles + endOfInsertionBlock + indentation + '`]';
-    if ('es5' === opts.target) assetFiles = compile(assetFiles).code;
-
-    // One liner.
-    if (start_line_idx === end_line_idx) {
-      lines[start_line_idx] = line.replace(opts.oneliner_pattern, assetFiles);
-    }
-    // One or more lines.
-    if (start_line_idx < end_line_idx) {
-      if (/(,)$/.test(lines[end_line_idx])) assetFiles += ',';
-      lines[start_line_idx] = line.replace(opts.start_pattern, assetFiles);
-      lines.splice(start_line_idx + 1, end_line_idx - start_line_idx);
+      function customProcessorCallback(cb) {
+        return function (err, file) {
+          if (err) return cb(err);
+          assetFiles += file;
+          cb(null);
+        };
+      }
     }
 
     function getFile(filepath) {
@@ -193,12 +245,12 @@ module.exports = function parser(file, options) {
                                           : join(process.cwd(), opts.base, filepath);
 
       if(opts.supportNonExistentFiles && !fs.existsSync(absPath)) {
-        return '';  
+        return '';
       }
-      
+
       var ext = /\.[0-9a-z]+$/i.exec(absPath);
       absPath = opts.customFilePath(ext, absPath);
-      
+
       return fs.readFileSync(absPath)
         .toString()
         .replace(/\r/g, '')

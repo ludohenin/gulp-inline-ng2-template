@@ -21,12 +21,13 @@
   "author": "ludohenin <ludovic.henin@yahoo.com>",
   "license": "MIT",
   "dependencies": {
+    "async": "^2.0.0-rc.5",
+    "clone": "~1.0.2",
     "es6-templates": "~0.2.2",
     "extend": "~3.0.0",
     "gulp-util": "~3.0.6",
-    "through2": "~2.0.0",
     "isarray": "0.0.1",
-    "clone": "~1.0.2"
+    "through2": "~2.0.0"
   },
   "devDependencies": {
     "color": "~0.10.1",
