@@ -24,7 +24,7 @@ module.exports = exports = function inline(options) {
         if (err) return cb(new gutil.PluginError(PLUGIN_NAME, err, {fileName: file.path}));
         file.contents = new Buffer(contents);
         _this.push(file);
-        cb();
+        process.nextTick(cb);
       });
 
     } catch (err) {
