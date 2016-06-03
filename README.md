@@ -177,9 +177,10 @@ var options = {target: 'es5'};
 
 function (file) {
   return through(function (buf, enc, next){
-    result = ng2TemplateParser({contents: buf, path: file}, options);
-    this.push(result);
-    next();
+    result = ng2TemplateParser({contents: buf, path: file}, options)(result => {
+      this.push(result);
+      next();
+    });
   });
 }
 ```
