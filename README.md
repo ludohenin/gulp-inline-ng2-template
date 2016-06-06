@@ -177,7 +177,7 @@ var options = {target: 'es5'};
 
 function (file) {
   return through(function (buf, enc, next){
-    result = ng2TemplateParser({contents: buf, path: file}, options)(result => {
+    ng2TemplateParser({contents: buf, path: file}, options)((err, result) => {
       this.push(result);
       process.nextTick(next);
     });
