@@ -223,10 +223,14 @@ module.exports = function parser(file, options) {
           var file = getFile(url);
           var ext = /\.[0-9a-z]+$/i.exec(url);
           if (HTML && opts.templateProcessor) {
-            opts.templateProcessor(ext, file, customProcessorCallback(cb));
+            process.nextTick(function () {
+              opts.templateProcessor(ext, file, customProcessorCallback(cb));
+            });
           }
           if (CSS && opts.styleProcessor) {
-            opts.styleProcessor(ext, file, customProcessorCallback(cb));
+            process.nextTick(function () {
+              opts.styleProcessor(ext, file, customProcessorCallback(cb));
+            });
           }
         };
       }), cb);
@@ -235,7 +239,7 @@ module.exports = function parser(file, options) {
         return function (err, file) {
           if (err) return cb(err);
           assetFiles += file;
-          cb(null);
+          process.nextTick(cb);
         };
       }
     }
