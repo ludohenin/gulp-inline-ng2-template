@@ -26,6 +26,7 @@ node_modules
 
 # IDE config
 .vscode
+.idea
 
 # Users Environment Variables
 .lock-wscript
