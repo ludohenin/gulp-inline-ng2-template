@@ -111,7 +111,7 @@ module.exports = function parser(file, options) {
               replaceFrag
             ], cb);
           } else {
-            cb(null);
+            process.nextTick(cb);
           }
         });
       }(i));
