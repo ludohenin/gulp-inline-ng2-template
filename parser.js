@@ -161,7 +161,28 @@ module.exports = function parser(file, options) {
     var fnIndex = frag.indexOf('(');
     if (fnIndex > -1 && opts.templateFunction) {
       // Using template function.
-      _urls = opts.templateFunction(/'(.*)'/.exec(frag)[1]);
+
+      // Check if templateFunction uses single quotes or quote marks.
+      var urlRegex = frag.indexOf('\'') != -1 ? /'(.*)'/ : /"(.*)"/;
+
+      // Need to clone the regex, since exec() keeps the lastIndex.
+      var testRegex = clone(urlRegex), lineCheck = clone(urlRegex);
+      var hasMultiline = testRegex.exec(frag)[1];
+      
+      if (hasMultiline && hasMultiline.lastIndexOf(",") != -1) {
+        _urls = [];
+        // Split fragments that kept comma.
+        var files = frag.split(",");
+        
+        // Populate url list, using the return value of the templateFunction.
+        for (var i = 0; i < files.length; i++) {
+          _urls.push(opts.templateFunction(lineCheck.exec(files[i])[1]));
+        }
+      }
+      
+      if (!_urls) {
+        _urls = opts.templateFunction(urlRegex.exec(frag)[1]);
+      }
     } else {
       _urls = eval('({' + frag + '})')[opts.prop_url];
     }

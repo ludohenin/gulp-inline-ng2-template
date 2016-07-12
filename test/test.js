@@ -97,6 +97,31 @@ describe('gulp-inline-ng2-template', function () {
 
     runTest(paths, { supportNonExistentFiles: true }, done);
   });
+
+  it('should work with different quote marks', function (done) {
+    var paths = {
+      TEST_FILE      : './test/fixtures/templates_quotemark.js',
+      RESULT_EXPECTED: './test/fixtures/result_expected_quotemark.js',
+      RESULT_ACTUAL  : './test/fixtures/result_actual_quotemark.js'
+    };
+
+    runTest(paths, { base: 'test/fixtures' }, done);
+  });
+
+  it('should work with template function and different quote marks', function (done) {
+    var paths = {
+      TEST_FILE      : './test/fixtures/templates_quotemark_function.js',
+      RESULT_EXPECTED: './test/fixtures/result_expected_quotemark_function.js',
+      RESULT_ACTUAL  : './test/fixtures/result_actual_quotemark_function.js'
+    };
+
+    var OPTIONS = { 
+      base: 'test/fixtures',
+      templateFunction: viewFunction
+    };
+
+    runTest(paths, OPTIONS, done);
+  });
 });
 
 
