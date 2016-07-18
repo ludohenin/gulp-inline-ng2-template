@@ -146,7 +146,7 @@ module.exports = function parser(file, options) {
       frag      = concatLines();
     }
 
-    cb();
+    process.nextTick(cb);
 
     function concatLines() {
       var _lines = clone(lines);
