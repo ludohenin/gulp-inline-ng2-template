@@ -64,8 +64,8 @@ defaults = {
   removeLineBreaks: false     // Content will be included as one line
   templateExtension: '.html', // Update according to your file extension
   templateFunction: false,    // If using a function instead of a string for `templateUrl`, pass a reference to that function here
-  templateProcessor: function (ext, file, callback) {/* ... */},
-  styleProcessor: function (ext, file, callback) {/* ... */},
+  templateProcessor: function (path, ext, file, callback) {/* ... */},
+  styleProcessor: function (path, ext, file, callback) {/* ... */},
   customFilePath: function(ext, file) {/* ... */},
   supportNonExistentFiles: false // If html or css file do not exist just return empty content
 };
