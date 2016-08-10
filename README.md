@@ -11,6 +11,8 @@ Very convenient to unit test your component or bundle your components/applicatio
 
 __note:__
 
+* 3.0.0 - __Breaking changes__
+  * Change processor function signature
 * 2.0.0 - __Breaking changes__
   * Refactor the parser and make it async
   * `templateProcessor` and `styleProcessor` now accept a callback as 3rd argument
@@ -77,6 +79,7 @@ defaults = {
 /**
  *  Processor function call signature and type return
  *
+ * @Param{String}   file path
  * @Param{String}   file extension (type)
  * @Param{String}   file content
  * @Param{Function} callback function (err, result) => void
