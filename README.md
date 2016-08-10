@@ -85,8 +85,8 @@ defaults = {
  * @Param{Function} callback function (err, result) => void
  * @Return{void}
  */
-function processor(ext, file, cb) {
-  // sync OR async implementation of your source files processing goes here ...
+function processor(path, ext, file, cb) {
+  // async implementation of your source files processing goes here ...
   cb(null, file);
 }
 ```
@@ -104,7 +104,7 @@ const pluginOptions = {
   templateProcessor: minifyTemplate
 };
 
-function minifyTemplate(ext, file, cb) {
+function minifyTemplate(path, ext, file, cb) {
   try {
     var minifiedFile = htmlMinifier.minify(file, {
       collapseWhitespace: true,
