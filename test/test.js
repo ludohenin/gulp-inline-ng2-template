@@ -67,10 +67,10 @@ describe('gulp-inline-ng2-template', function () {
       base: 'test/fixtures',
       useRelative: true,
       templateExtension: 'jade',
-      templateProcessor: function (path, file, cb) {
+      templateProcessor: function (path, ext, file, cb) {
         return cb(null, require('jade').render(file));
       },
-      styleProcessor: function (path, file, cb) {
+      styleProcessor: function (path, ext, file, cb) {
         return cb(null, require('stylus').render(file));
       }
     };
@@ -115,7 +115,7 @@ describe('gulp-inline-ng2-template', function () {
       RESULT_ACTUAL  : './test/fixtures/result_actual_quotemark_function.js'
     };
 
-    var OPTIONS = { 
+    var OPTIONS = {
       base: 'test/fixtures',
       templateFunction: viewFunction
     };
