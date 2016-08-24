@@ -108,6 +108,16 @@ describe('gulp-inline-ng2-template', function () {
     runTest(paths, { base: 'test/fixtures' }, done);
   });
 
+  it('should work with backticks', function (done) {
+    var paths = {
+      TEST_FILE      : './test/fixtures/templates_backtick.js',
+      RESULT_EXPECTED: './test/fixtures/result_expected_backtick.js',
+      RESULT_ACTUAL  : './test/fixtures/result_actual_backtick.js'
+    };
+
+    runTest(paths, { base: 'test/fixtures' }, done);
+  });
+
   it('should work with template function and different quote marks', function (done) {
     var paths = {
       TEST_FILE      : './test/fixtures/templates_quotemark_function.js',
