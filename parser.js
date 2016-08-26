@@ -8,6 +8,7 @@ var fs = require('fs');
 var isarray = require('isarray');
 var join = require('path').join;
 var dirname = require('path').dirname;
+var resolve = require('path').resolve;
 
 
 // -----------------------------------------------------------------------------
@@ -26,7 +27,7 @@ var defaults = {
   supportNonExistentFiles: false
 };
 
-function defaultProcessor(path, file, cb) {
+function defaultProcessor(path, ext, file, cb) {
   return cb(null, file);
 }
 
@@ -40,8 +41,8 @@ var htmlOptions = function (opts) {
     prop_url: 'templateUrl',
     prop: 'template',
     start_pattern: /templateUrl\s*:.*/,
-    end_pattern: new RegExp('.*\\' + opts.templateExtension + '\s*(\'\\)|\')|.*\\' + opts.templateExtension + '\s*("\\)|")'),
-    oneliner_pattern: new RegExp('templateUrl.*(\\' + opts.templateExtension + '\s*(\'\\)|\')|\\' + opts.templateExtension + 's*("\\)|"))')
+    end_pattern: new RegExp('.*\\' + opts.templateExtension + '\s*(\'\\)|\')|.*\\' + opts.templateExtension + '\s*("\\)|")|.*\\' + opts.templateExtension + '\s*(`\\)|`)'),
+    oneliner_pattern: new RegExp('templateUrl.*(\\' + opts.templateExtension + '\s*(\'\\)|\')|\\' + opts.templateExtension + 's*("\\)|")|\\' + opts.templateExtension + 's*(`\\)|`))')
   };
 };
 
@@ -126,7 +127,7 @@ module.exports = function parser(file, options) {
       }
       if (opts.end_pattern.test(line)) {
         // Match end pattern without start.
-        // end_line_idx is till equal to previous loop turn value.
+        // end_line_idx is still equal to previous loop turn value.
         if (start_line_idx <= end_line_idx) return;
         end_line_idx = i;
       }
@@ -168,18 +169,18 @@ module.exports = function parser(file, options) {
       // Need to clone the regex, since exec() keeps the lastIndex.
       var testRegex = clone(urlRegex), lineCheck = clone(urlRegex);
       var hasMultiline = testRegex.exec(frag)[1];
-      
+
       if (hasMultiline && hasMultiline.lastIndexOf(",") != -1) {
         _urls = [];
         // Split fragments that kept comma.
         var files = frag.split(",");
-        
+
         // Populate url list, using the return value of the templateFunction.
         for (var i = 0; i < files.length; i++) {
           _urls.push(opts.templateFunction(lineCheck.exec(files[i])[1]));
         }
       }
-      
+
       if (!_urls) {
         _urls = opts.templateFunction(urlRegex.exec(frag)[1]);
       }
@@ -241,16 +242,17 @@ module.exports = function parser(file, options) {
     function getFilesAndApplyCustomProcessor(cb) {
       series(urls.map(function (url) {
         return function (cb) {
-          var file = getFile(url);
+          var data = getFileData(url);
+          var path = resolve(dirname(file.path), url);
           var ext = /\.[0-9a-z]+$/i.exec(url);
           if (HTML && opts.templateProcessor) {
             process.nextTick(function () {
-              opts.templateProcessor(ext, file, customProcessorCallback(cb));
+              opts.templateProcessor(path, ext, data, customProcessorCallback(cb));
             });
           }
           if (CSS && opts.styleProcessor) {
             process.nextTick(function () {
-              opts.styleProcessor(ext, file, customProcessorCallback(cb));
+              opts.styleProcessor(path, ext, data, customProcessorCallback(cb));
             });
           }
         };
@@ -265,7 +267,7 @@ module.exports = function parser(file, options) {
       }
     }
 
-    function getFile(filepath) {
+    function getFileData(filepath) {
       var absPath = opts.useRelativePaths ? join(dirname(file.path), filepath)
                                           : join(process.cwd(), opts.base, filepath);
 

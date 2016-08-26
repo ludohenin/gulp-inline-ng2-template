@@ -11,6 +11,8 @@ Very convenient to unit test your component or bundle your components/applicatio
 
 __note:__
 
+* 3.0.0 - __Breaking changes__
+  * Change processor function signature
 * 2.0.0 - __Breaking changes__
   * Refactor the parser and make it async
   * `templateProcessor` and `styleProcessor` now accept a callback as 3rd argument
@@ -64,8 +66,8 @@ defaults = {
   removeLineBreaks: false     // Content will be included as one line
   templateExtension: '.html', // Update according to your file extension
   templateFunction: false,    // If using a function instead of a string for `templateUrl`, pass a reference to that function here
-  templateProcessor: function (ext, file, callback) {/* ... */},
-  styleProcessor: function (ext, file, callback) {/* ... */},
+  templateProcessor: function (path, ext, file, callback) {/* ... */},
+  styleProcessor: function (path, ext, file, callback) {/* ... */},
   customFilePath: function(ext, file) {/* ... */},
   supportNonExistentFiles: false // If html or css file do not exist just return empty content
 };
@@ -77,13 +79,14 @@ defaults = {
 /**
  *  Processor function call signature and type return
  *
+ * @Param{String}   file path
  * @Param{String}   file extension (type)
  * @Param{String}   file content
  * @Param{Function} callback function (err, result) => void
  * @Return{void}
  */
-function processor(ext, file, cb) {
-  // sync OR async implementation of your source files processing goes here ...
+function processor(path, ext, file, cb) {
+  // async implementation of your source files processing goes here ...
   cb(null, file);
 }
 ```
@@ -101,7 +104,7 @@ const pluginOptions = {
   templateProcessor: minifyTemplate
 };
 
-function minifyTemplate(ext, file, cb) {
+function minifyTemplate(path, ext, file, cb) {
   try {
     var minifiedFile = htmlMinifier.minify(file, {
       collapseWhitespace: true,
