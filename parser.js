@@ -41,8 +41,8 @@ var htmlOptions = function (opts) {
     prop_url: 'templateUrl',
     prop: 'template',
     start_pattern: /templateUrl\s*:.*/,
-    end_pattern: new RegExp('.*\\' + opts.templateExtension + '\s*(\'\\)|\')|.*\\' + opts.templateExtension + '\s*("\\)|")'),
-    oneliner_pattern: new RegExp('templateUrl.*(\\' + opts.templateExtension + '\s*(\'\\)|\')|\\' + opts.templateExtension + 's*("\\)|"))')
+    end_pattern: new RegExp('.*\\' + opts.templateExtension + '\s*(\'\\)|\')|.*\\' + opts.templateExtension + '\s*("\\)|")|.*\\' + opts.templateExtension + '\s*(`\\)|`)'),
+    oneliner_pattern: new RegExp('templateUrl.*(\\' + opts.templateExtension + '\s*(\'\\)|\')|\\' + opts.templateExtension + 's*("\\)|")|\\' + opts.templateExtension + 's*(`\\)|`))')
   };
 };
 
@@ -127,7 +127,7 @@ module.exports = function parser(file, options) {
       }
       if (opts.end_pattern.test(line)) {
         // Match end pattern without start.
-        // end_line_idx is till equal to previous loop turn value.
+        // end_line_idx is still equal to previous loop turn value.
         if (start_line_idx <= end_line_idx) return;
         end_line_idx = i;
       }
