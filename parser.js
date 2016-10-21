@@ -304,18 +304,10 @@ module.exports = function parser(file, options) {
     /**
      * Escapes ECMAScript6 interpolation inside the HTML string, which would
      * normally break the output template because ES6 would look for a variable
-     * inside the braces.
-     *
-     * Example input:
-     *
-     *     <div>You have ${{amount}} dollars.</div>
-     *
-     * Output:
-     *
-     *     <div>You have \${{amount}} dollars.</div>
+     * inside the braces. Example change: ${{amount}} -> \${{amount}}
      *
      * @param htmlStr The HTML string which may have Angular 2 interpolation {{}}
-     *   markers, which also may have a $ sign in front of them. Ex: ${{amount}}
+     *   markers with a $ sign in front of them.
      * @returns {string} The HTML string with ES6 interpolation escaped.
      */
     function escapeEs6Interpolation(htmlStr) {
