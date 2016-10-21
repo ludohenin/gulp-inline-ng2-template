@@ -218,6 +218,12 @@ module.exports = function parser(file, options) {
         endOfInsertionBlock = '';
       }
 
+      // Need to escape any ${} strings to \${}, as these will break in the
+      // final output when ES6 looks for the variable inside the ${}. Need
+      // to escape even in ES5 mode because they must be escaped before running
+      // the string through the 'es6-templates' compiler
+      assetFiles = escapeEs6Interpolation(assetFiles);
+
       // Build the final string.
       if ('html' === opts.type)
         assetFiles = opts.prop + ': `' + startOfInsertionBlock + assetFiles + endOfInsertionBlock + indentation + '`';
@@ -293,6 +299,27 @@ module.exports = function parser(file, options) {
         lines.push((/^(\s*)$/.test(line) ? '' : spaces) + line);
       });
       return lines.join('\n');
+    }
+
+    /**
+     * Escapes ECMAScript6 interpolation inside the HTML string, which would
+     * normally break the output template because ES6 would look for a variable
+     * inside the braces.
+     *
+     * Example input:
+     *
+     *     <div>You have ${{amount}} dollars.</div>
+     *
+     * Output:
+     *
+     *     <div>You have \${{amount}} dollars.</div>
+     *
+     * @param htmlStr The HTML string which may have Angular 2 interpolation {{}}
+     *   markers, which also may have a $ sign in front of them. Ex: ${{amount}}
+     * @returns {string} The HTML string with ES6 interpolation escaped.
+     */
+    function escapeEs6Interpolation(htmlStr) {
+      return htmlStr.replace( /\$\{/g, '\\${' );
     }
 
     function removeLineBreaks(str) {
