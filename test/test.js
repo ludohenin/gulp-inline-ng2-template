@@ -132,6 +132,35 @@ describe('gulp-inline-ng2-template', function () {
 
     runTest(paths, OPTIONS, done);
   });
+
+  it('should work with html templates that use a $ sign before {{}} interpolation in ES6 mode by escaping it in the final output', function( done ) {
+    var paths = {
+      TEST_FILE      : './test/fixtures/templates_dollar_interpolation.js',
+      RESULT_EXPECTED: './test/fixtures/result_expected_dollar_interpolation_es6.js',
+      RESULT_ACTUAL  : './test/fixtures/result_actual_dollar_interpolation_es6.js'
+    };
+
+    var OPTIONS = {
+      base: 'test/fixtures'
+    };
+
+    runTest(paths, OPTIONS, done);
+  } );
+
+  it('should work with html templates that use a $ sign before {{}} interpolation in ES5 mode, where no escape should be added in the final output', function( done ) {
+    var paths = {
+      TEST_FILE      : './test/fixtures/templates_dollar_interpolation.js',
+      RESULT_EXPECTED: './test/fixtures/result_expected_dollar_interpolation_es5.js',
+      RESULT_ACTUAL  : './test/fixtures/result_actual_dollar_interpolation_es5.js'
+    };
+
+    var OPTIONS = {
+      base: 'test/fixtures',
+      target: 'es5'
+    };
+
+    runTest(paths, OPTIONS, done);
+  } );
 });
 
 
