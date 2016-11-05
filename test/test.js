@@ -145,7 +145,7 @@ describe('gulp-inline-ng2-template', function () {
     };
 
     runTest(paths, OPTIONS, done);
-  } );
+  });
 
   it('should work with html templates that use a $ sign before {{}} interpolation in ES5 mode, where no escape should be added in the final output', function( done ) {
     var paths = {
@@ -160,16 +160,47 @@ describe('gulp-inline-ng2-template', function () {
     };
 
     runTest(paths, OPTIONS, done);
-  } );
+  });
+
+  it('should emit the "error" event to the stream if a templateProcessor calls the callback with an error', function( done ) {
+    var jsFile = createFile('./test/fixtures/templates.js');
+
+    var stream = inline({
+      base: 'test/fixtures',
+      templateProcessor: function(path, ext, file, callback) {
+        callback('test-error');
+      }
+    });
+    stream.on('error', function(errorReceived) {
+      assert.equal(errorReceived.message, 'test-error');
+      done();
+    });
+
+    stream.write(jsFile);
+  });
+
+  it('should emit the "error" event to the stream if a styleProcessor calls the callback with an error', function( done ) {
+    var jsFile = createFile('./test/fixtures/templates.js');
+
+    var stream = inline({
+      base: 'test/fixtures',
+      styleProcessor: function(path, ext, file, callback) {
+        callback('test-error');
+      }
+    });
+    stream.on('error', function(errorReceived) {
+      assert.equal(errorReceived.message, 'test-error');
+      done();
+    });
+
+    stream.write(jsFile);
+  });
 });
 
 
 
 function runTest(paths, pluginOptions, done) {
-  var jsFile = new File({
-    contents: new Buffer(fs.readFileSync(paths.TEST_FILE).toString()),
-    path: join(process.cwd(), 'test/fixtures/someSrcFile')
-  });
+  var jsFile = createFile(paths.TEST_FILE);
 
   var stream = inline(pluginOptions);
   stream.write(jsFile);
@@ -184,5 +215,12 @@ function runTest(paths, pluginOptions, done) {
       fs.readFileSync(paths.RESULT_EXPECTED).toString()
     );
     done();
+  });
+}
+
+function createFile(filePath) {
+  return new File({
+    contents: new Buffer(fs.readFileSync(filePath).toString()),
+    path: join(process.cwd(), 'test/fixtures/someSrcFile')
   });
 }
