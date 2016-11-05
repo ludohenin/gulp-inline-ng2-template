@@ -13,7 +13,7 @@
       color: red;
     }
     smile:before {
-      content: "\000B";
+      content: "\\000B";
     }
   `],
   directives: [CORE_DIRECTIVES]

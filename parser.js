@@ -201,8 +201,11 @@ module.exports = function parser(file, options) {
     ], cb);
 
     function _replaceFrag(cb) {
-      // Trim trailing line breaks and unescape any backtick characters present.
-      assetFiles = assetFiles.replace(/(\n*)$/, '').replace(/`/g, '\\`');
+      assetFiles = assetFiles
+        .replace(/\\/g, '\\\\')    // Escape existing backslashes for the final output into a string literal, which would otherwise escape the character after it
+        .replace(/\$\{/g, '\\${')  // Escape ES6 ${myVar} to \${myVar}. ES6 would otherwise look for a local variable named myVar
+        .replace(/`/g, '\\`')      // Escape ES6 backticks which would end the ES6 template literal string too early
+        .replace(/(\n*)$/, '');    // Trim trailing line breaks
 
       // We don't need indentation if we are going to insert it as one line
       if(!opts.removeLineBreaks) {
@@ -217,12 +220,6 @@ module.exports = function parser(file, options) {
         startOfInsertionBlock = '';
         endOfInsertionBlock = '';
       }
-
-      // Need to escape any ${} strings to \${}, as these will break in the
-      // final output when ES6 looks for the variable inside the ${}. Need
-      // to escape even in ES5 mode because they must be escaped before running
-      // the string through the 'es6-templates' compiler
-      assetFiles = escapeEs6Interpolation(assetFiles);
 
       // Build the final string.
       if ('html' === opts.type)
@@ -299,19 +296,6 @@ module.exports = function parser(file, options) {
         lines.push((/^(\s*)$/.test(line) ? '' : spaces) + line);
       });
       return lines.join('\n');
-    }
-
-    /**
-     * Escapes ECMAScript6 interpolation inside the HTML string, which would
-     * normally break the output template because ES6 would look for a variable
-     * inside the braces. Example change: ${{amount}} -> \${{amount}}
-     *
-     * @param htmlStr The HTML string which may have Angular 2 interpolation {{}}
-     *   markers with a $ sign in front of them.
-     * @returns {string} The HTML string with ES6 interpolation escaped.
-     */
-    function escapeEs6Interpolation(htmlStr) {
-      return htmlStr.replace( /\$\{/g, '\\${' );
     }
 
     function removeLineBreaks(str) {

@@ -11,7 +11,7 @@
       color: #f00;
     }
     smile:before {
-      content: "\000B";
+      content: "\\000B";
     }
     .common {
       color: #808080;
