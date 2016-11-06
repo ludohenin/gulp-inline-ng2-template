@@ -11,6 +11,9 @@ Very convenient to unit test your component or bundle your components/applicatio
 
 __note:__
 
+* 4.0.0 -
+  * Now escapes templates (html & css) backslashes. You may remove your custom workarounds if any
+  * Proper error handling and propagation
 * 3.0.0 - __Breaking changes__
   * Change processor function signature
 * 2.0.0 - __Breaking changes__
