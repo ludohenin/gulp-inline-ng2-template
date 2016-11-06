@@ -20,7 +20,7 @@
     }
     /* This is a comment with \`backticks\` in it. */
     smile:before {
-      content: "\000B";
+      content: "\\000B";
     }
   `],
   directives: [CORE_DIRECTIVES]

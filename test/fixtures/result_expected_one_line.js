@@ -4,7 +4,7 @@
 })
 @View({
   template: `<h1>Test</h1>  <p>   Test </p>`,
-  styles: [`.test {   color: red; } smile:before {   content: "\000B"; }`],
+  styles: [`.test {   color: red; } smile:before {   content: "\\000B"; }`],
   directives: [CORE_DIRECTIVES]
 })
 export class App {}
@@ -15,7 +15,7 @@ export class App {}
 })
 @View({
   template: `<h1>Test</h1>  <p>   Test </p>`,
-  styles: [`.test {   color: red; } smile:before {   content: "\000B"; }`]
+  styles: [`.test {   color: red; } smile:before {   content: "\\000B"; }`]
 })
 export class App {}
 
@@ -25,7 +25,7 @@ export class App {}
 })
 @View({
   template: `<h1>Test</h1>  <p>   Test </p>`,
-  styles: [`.test {   color: red; } smile:before {   content: "\000B"; } .common {   color: grey; }`],
+  styles: [`.test {   color: red; } smile:before {   content: "\\000B"; } .common {   color: grey; }`],
   directives: [CORE_DIRECTIVES]
 })
 export class App {}
@@ -36,7 +36,7 @@ export class App {}
 })
 @View({
   template: `<h1>Test</h1>  <p>   Test </p>`,
-  styles: [`.test {   color: red; } smile:before {   content: "\000B"; } .common {   color: grey; } .test {   color: red; } smile:before {   content: "\000B"; } .common {   color: grey; }`],
+  styles: [`.test {   color: red; } smile:before {   content: "\\000B"; } .common {   color: grey; } .test {   color: red; } smile:before {   content: "\\000B"; } .common {   color: grey; }`],
   directives: [CORE_DIRECTIVES]
 })
 export class App {}
@@ -47,7 +47,7 @@ export class App {}
 })
 @View({
   template: `<h1>Test</h1>  <p>   Test </p>`,
-  styles: [`.test {   color: red; } smile:before {   content: "\000B"; } .common {   color: grey; }`],
+  styles: [`.test {   color: red; } smile:before {   content: "\\000B"; } .common {   color: grey; }`],
   directives: [CORE_DIRECTIVES]
 })
 export class App {}
@@ -56,14 +56,14 @@ export class App {}
 @Component({
   selector: 'app'
 })
-@View({ template: `<h1>Test</h1>  <p>   Test </p>`, styles: [`.test {   color: red; } smile:before {   content: "\000B"; } .common {   color: grey; }`] })
+@View({ template: `<h1>Test</h1>  <p>   Test </p>`, styles: [`.test {   color: red; } smile:before {   content: "\\000B"; } .common {   color: grey; }`] })
 export class App {}
 
 // TEST_7
 @Component({
   selector: 'app'
 })
-@View({ template: `<h1>Test</h1>  <p>   Test </p>`, styles: [`.test {   color: red; } smile:before {   content: "\000B"; } .common {   color: grey; }`], directives: [CORE_DIRECTIVES] })
+@View({ template: `<h1>Test</h1>  <p>   Test </p>`, styles: [`.test {   color: red; } smile:before {   content: "\\000B"; } .common {   color: grey; }`], directives: [CORE_DIRECTIVES] })
 export class App {}
 
 // TEST_8
@@ -71,7 +71,7 @@ export class App {}
   selector: 'app'
 })
 @View({ template: `<h1>Test</h1>  <p>   Test </p>`,
-  styles: [`.test {   color: red; } smile:before {   content: "\000B"; } .common {   color: grey; }`], directives: [CORE_DIRECTIVES] })
+  styles: [`.test {   color: red; } smile:before {   content: "\\000B"; } .common {   color: grey; }`], directives: [CORE_DIRECTIVES] })
 export class App {}
 
 // TEST_9

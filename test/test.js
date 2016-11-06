@@ -133,11 +133,11 @@ describe('gulp-inline-ng2-template', function () {
     runTest(paths, OPTIONS, done);
   });
 
-  it('should work with html templates that use a $ sign before {{}} interpolation in ES6 mode by escaping it in the final output', function( done ) {
+  it('in ES6 mode, should escape JS string literal chars from html/css templates that would cause a problem in the final output', function( done ) {
     var paths = {
-      TEST_FILE      : './test/fixtures/templates_dollar_interpolation.js',
-      RESULT_EXPECTED: './test/fixtures/result_expected_dollar_interpolation_es6.js',
-      RESULT_ACTUAL  : './test/fixtures/result_actual_dollar_interpolation_es6.js'
+      TEST_FILE      : './test/fixtures/templates_bad_string_literal_chars.js',
+      RESULT_EXPECTED: './test/fixtures/result_expected_bad_string_literal_chars_es6.js',
+      RESULT_ACTUAL  : './test/fixtures/result_actual_bad_string_literal_chars_es6.js'
     };
 
     var OPTIONS = {
@@ -147,11 +147,11 @@ describe('gulp-inline-ng2-template', function () {
     runTest(paths, OPTIONS, done);
   } );
 
-  it('should work with html templates that use a $ sign before {{}} interpolation in ES5 mode, where no escape should be added in the final output', function( done ) {
+  it('in ES5 mode, should escape JS string literal chars from html/css templates that would cause a problem in the final output', function( done ) {
     var paths = {
-      TEST_FILE      : './test/fixtures/templates_dollar_interpolation.js',
-      RESULT_EXPECTED: './test/fixtures/result_expected_dollar_interpolation_es5.js',
-      RESULT_ACTUAL  : './test/fixtures/result_actual_dollar_interpolation_es5.js'
+      TEST_FILE      : './test/fixtures/templates_bad_string_literal_chars.js',
+      RESULT_EXPECTED: './test/fixtures/result_expected_bad_string_literal_chars_es5.js',
+      RESULT_ACTUAL  : './test/fixtures/result_actual_bad_string_literal_chars_es5.js'
     };
 
     var OPTIONS = {
