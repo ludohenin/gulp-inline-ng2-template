@@ -69,8 +69,8 @@ module.exports = function parser(file, options) {
     series([
       processTemplate,
       processStyles
-    ], function () {
-      done(null, lines.join('\n'));
+    ], function (err) {
+      done(err, lines.join('\n'));
     });
   };
 
@@ -79,9 +79,9 @@ module.exports = function parser(file, options) {
     if (opts.templateProcessor) {
       HTML = true;
       extend(opts, htmlOptions(opts));
-      execute(function () {
+      execute(function (err) {
         reset();
-        done(null);
+        done(err);
       });
     }
   }
@@ -90,9 +90,9 @@ module.exports = function parser(file, options) {
     if (opts.styleProcessor) {
       CSS = true;
       extend(opts, cssOptions());
-      execute(function () {
+      execute(function (err) {
         reset();
-        done(null);
+        done(err);
       });
     }
   }
