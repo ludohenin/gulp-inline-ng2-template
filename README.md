@@ -82,10 +82,6 @@ defaults = {
 };
 ```
 
-#### Component.moduleId
-
-
-
 ### Processors configuration
 
 ```typescript
