@@ -9,6 +9,11 @@ This plugin uses the [ES6 template strings](https://github.com/lukehoban/es6feat
 
 Very convenient to unit test your component or bundle your components/application (avoid extra HTTP request and keeps your source clean).
 
+By aggressively inlining templates, component library authors can ensure that their library is
+compatible with all deployment methods (SystemJS, Webpack, etc.) and avoid problems associated
+with setting `Component.moduleId` on published components.
+
+
 __note:__
 
 * 4.0.0 -
@@ -65,8 +70,9 @@ defaults = {
   base: '/',                  // Angular2 application base folder
   target: 'es6',              // Can swap to es5
   indent: 2,                  // Indentation (spaces)
-  useRelativePaths: false     // Use components relative assset paths
-  removeLineBreaks: false     // Content will be included as one line
+  useRelativePaths: false,    // Use components relative assset paths
+  removeLineBreaks: false,    // Content will be included as one line
+  removeModuleId: false,      // Remove the `moduleId` key from component definition after inlining styles
   templateExtension: '.html', // Update according to your file extension
   templateFunction: false,    // If using a function instead of a string for `templateUrl`, pass a reference to that function here
   templateProcessor: function (path, ext, file, callback) {/* ... */},

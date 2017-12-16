@@ -1,6 +1,7 @@
 // TEST_1
 @Component({
-  selector: 'app'
+  selector: 'app',
+  moduleId: module.id
 })
 @View({
   template: `<h1>Test</h1>  <p>   Test </p>`,

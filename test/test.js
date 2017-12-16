@@ -56,6 +56,22 @@ describe('gulp-inline-ng2-template', function () {
     runTest(paths, OPTIONS, done);
   });
 
+  it('should work with default config and remove the module id', function (done) {
+    var paths = {
+      TEST_FILE      :'./test/fixtures/templates_remove_module_id.js',
+      RESULT_EXPECTED: './test/fixtures/result_expected_remove_module_id.js',
+      RESULT_ACTUAL  : './test/fixtures/result_actual_remove_module_id.js'
+    };
+
+    var OPTIONS = {
+      base: 'test/fixtures',
+      removeModuleId: true
+    };
+
+    debugger;
+    runTest(paths, OPTIONS, done);
+  });
+
   it('should work with templates and styles processors', function (done) {
     var paths = {
       TEST_FILE      : './test/fixtures/templates_processors.js',
@@ -161,6 +177,8 @@ describe('gulp-inline-ng2-template', function () {
 
     runTest(paths, OPTIONS, done);
   });
+
+
 
   it('should emit the "error" event to the stream if a templateProcessor calls the callback with an error', function( done ) {
     var jsFile = createFile('./test/fixtures/templates.js');

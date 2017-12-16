@@ -19,6 +19,7 @@ var defaults = {
   indent: 2,
   useRelativePaths: false,
   removeLineBreaks: false,
+  removeModuleId: false,
   templateExtension: '.html',
   templateFunction: false,
   templateProcessor: defaultProcessor,
@@ -57,6 +58,17 @@ var cssOptions = function () {
   };
 };
 
+var moduleIdOptions = function () {
+  return {
+    type: 'module_id',
+    prop_url: null,
+    prop: null,
+    start_pattern: /\s*moduleId\s*:[^,}]*,?/,
+    end_pattern: /[,}],?/,
+    oneliner_pattern: /moduleId\s*:\s*[^,}]*,?/
+  }
+};
+
 
 module.exports = function parser(file, options) {
   var opts = extend({}, defaults, (options || {}));
@@ -64,11 +76,13 @@ module.exports = function parser(file, options) {
   var start_line_idx, end_line_idx, frag;
   var HTML = false;
   var CSS = false;
+  var MODULE_ID = false;
 
   return function parse(done) {
     series([
       processTemplate,
-      processStyles
+      processStyles,
+      removeModuleId
     ], function (err) {
       done(err, lines.join('\n'));
     });
@@ -94,6 +108,20 @@ module.exports = function parser(file, options) {
         reset();
         done(err);
       });
+    }
+  }
+
+  function removeModuleId(done) {
+    if (opts.removeModuleId) {
+      MODULE_ID = true;
+      extend(opts, moduleIdOptions());
+      execute(function (err) {
+        reset();
+        done(err);
+      });
+    } else {
+      reset();
+      done();
     }
   }
 
@@ -160,7 +188,8 @@ module.exports = function parser(file, options) {
   function replaceFrag(cb) {
     var _urls;
     var fnIndex = frag.indexOf('(');
-    if (fnIndex > -1 && opts.templateFunction) {
+
+    if (opts.prop_url && fnIndex > -1 && opts.templateFunction) {
       // Using template function.
 
       // Check if templateFunction uses single quotes or quote marks.
@@ -170,7 +199,7 @@ module.exports = function parser(file, options) {
       var testRegex = clone(urlRegex), lineCheck = clone(urlRegex);
       var hasMultiline = testRegex.exec(frag)[1];
 
-      if (hasMultiline && hasMultiline.lastIndexOf(",") != -1) {
+      if (hasMultiline && hasMultiline.lastIndexOf(",") != -1) {
         _urls = [];
         // Split fragments that kept comma.
         var files = frag.split(",");
@@ -184,8 +213,10 @@ module.exports = function parser(file, options) {
       if (!_urls) {
         _urls = opts.templateFunction(urlRegex.exec(frag)[1]);
       }
-    } else {
+    } else if (opts.prop_url) {
       _urls = eval('({' + frag + '})')[opts.prop_url];
+    } else {
+      _urls = [];
     }
 
     var urls  = isarray(_urls) ? _urls : [_urls];
@@ -234,9 +265,19 @@ module.exports = function parser(file, options) {
       }
       // One or more lines.
       if (start_line_idx < end_line_idx) {
-        if (/(,)$/.test(lines[end_line_idx])) assetFiles += ',';
+        if ('module_id' !== opts.type && /,$/.test(lines[end_line_idx])) {
+          assetFiles += ',';
+        }
+        if (/\}\)$/.test(lines[end_line_idx])) {
+          assetFiles += '})';
+        }
+
         lines[start_line_idx] = line.replace(opts.start_pattern, assetFiles);
         lines.splice(start_line_idx + 1, end_line_idx - start_line_idx);
+      }
+
+      if (/^\s*$/.test(lines[start_line_idx])) {
+        lines.splice(start_line_idx, 1);
       }
 
       cb(null);
@@ -309,5 +350,6 @@ module.exports = function parser(file, options) {
     frag = undefined;
     HTML = false;
     CSS = false;
+    MODULE_ID = false;
   }
 };
