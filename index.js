@@ -2,7 +2,7 @@
 
 var gutil = require('gulp-util');
 var through = require('through2');
-
+var applySourceMap = require("vinyl-sourcemaps-apply");
 
 var PLUGIN_NAME = 'gulp-inline-ng2-template';
 
@@ -20,9 +20,11 @@ module.exports = exports = function inline(options) {
       var parse = require('./parser')(file, options);
       var _this = this
 
-      parse(function (err, contents) {
+      parse(function (err, result) {
         if (err) return cb(new gutil.PluginError(PLUGIN_NAME, err, {fileName: file.path}));
-        file.contents = new Buffer(contents);
+        file.contents = new Buffer(result.contents);
+        applySourceMap(file, result.sourceMap);
+
         _this.push(file);
         process.nextTick(cb);
       });

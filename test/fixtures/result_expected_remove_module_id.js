@@ -26,12 +26,12 @@ export class MultilineModuleId {}
 
 // TEST 3
 @Component({
-  selector: 'module-id-no-trailing-comma',
+  selector: 'module-id-no-trailing-comma'
 })
 export class LastPropertyModuleId {}
 
 // TEST 4
 @Component({
-  selector: 'string module id',
+  selector: 'string module id'
 })
 export class StringModuleId {}
