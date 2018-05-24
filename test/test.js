@@ -254,7 +254,7 @@ describe('gulp-inline-ng2-template', function () {
         assert.equal(file.sourceMap.sourcesContent[0], originalFileContents);
         done();
       }
-    }),
+    })
   });
 });
 
