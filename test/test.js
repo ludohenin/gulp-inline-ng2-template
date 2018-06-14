@@ -1,6 +1,6 @@
 "use strict";
 
-var assert = require('assert').strict;
+var assert = require('assert').strict || require('assert');
 var fs = require('fs');
 var File = require('vinyl');
 var inline = require('../index');
