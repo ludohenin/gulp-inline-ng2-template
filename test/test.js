@@ -1,6 +1,6 @@
 "use strict";
 
-var assert = require('assert');
+var assert = require('assert').strict;
 var fs = require('fs');
 var File = require('vinyl');
 var inline = require('../index');
@@ -190,7 +190,7 @@ describe('gulp-inline-ng2-template', function () {
       }
     });
     stream.on('error', function(errorReceived) {
-      assert.equal(errorReceived.message, 'test-error');
+      assert.strictEqual(errorReceived.message, 'test-error');
       done();
     });
 
@@ -207,7 +207,7 @@ describe('gulp-inline-ng2-template', function () {
       }
     });
     stream.on('error', function(errorReceived) {
-      assert.equal(errorReceived.message, 'test-error');
+      assert.strictEqual(errorReceived.message, 'test-error');
       done();
     });
 
@@ -228,7 +228,7 @@ function runTest(paths, pluginOptions, done) {
     // Save the result in a file.
     fs.writeFileSync(paths.RESULT_ACTUAL, result, 'utf8');
 
-    assert.equal(
+    assert.strictEqual(
       result,
       fs.readFileSync(paths.RESULT_EXPECTED).toString()
     );

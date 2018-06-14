@@ -193,13 +193,13 @@ module.exports = function parser(file, options) {
       // Using template function.
 
       // Check if templateFunction uses single quotes or quote marks.
-      var urlRegex = frag.indexOf('\'') != -1 ? /'(.*)'/ : /"(.*)"/;
+      var urlRegex = frag.indexOf('\'') !== -1 ? /'(.*)'/ : /"(.*)"/;
 
       // Need to clone the regex, since exec() keeps the lastIndex.
       var testRegex = clone(urlRegex), lineCheck = clone(urlRegex);
       var hasMultiline = testRegex.exec(frag)[1];
 
-      if (hasMultiline && hasMultiline.lastIndexOf(",") != -1) {
+      if (hasMultiline && hasMultiline.lastIndexOf(",") !== -1) {
         _urls = [];
         // Split fragments that kept comma.
         var files = frag.split(",");
@@ -234,7 +234,7 @@ module.exports = function parser(file, options) {
     function _replaceFrag(cb) {
       assetFiles = assetFiles
         .replace(/\\/g, '\\\\')    // Escape existing backslashes for the final output into a string literal, which would otherwise escape the character after it
-        .replace(/\$\{/g, '\\${')  // Escape ES6 ${myVar} to \${myVar}. ES6 would otherwise look for a local variable named myVar
+        .replace(/\${/g, '\\${')  // Escape ES6 ${myVar} to \${myVar}. ES6 would otherwise look for a local variable named myVar
         .replace(/`/g, '\\`')      // Escape ES6 backticks which would end the ES6 template literal string too early
         .replace(/(\n*)$/, '');    // Trim trailing line breaks
 
@@ -268,7 +268,7 @@ module.exports = function parser(file, options) {
         if ('module_id' !== opts.type && /,$/.test(lines[end_line_idx])) {
           assetFiles += ',';
         }
-        if (/\}\)$/.test(lines[end_line_idx])) {
+        if (/}\)$/.test(lines[end_line_idx])) {
           assetFiles += '})';
         }
 

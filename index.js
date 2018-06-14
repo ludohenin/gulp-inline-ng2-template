@@ -18,7 +18,7 @@ module.exports = exports = function inline(options) {
 
     try {
       var parse = require('./parser')(file, options);
-      var _this = this
+      var _this = this;
 
       parse(function (err, contents) {
         if (err) return cb(new gutil.PluginError(PLUGIN_NAME, err, {fileName: file.path}));
