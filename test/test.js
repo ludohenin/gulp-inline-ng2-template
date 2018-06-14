@@ -28,7 +28,7 @@ describe('gulp-inline-ng2-template', function () {
       RESULT_ACTUAL  : './test/fixtures/result_actual_relative.js'
     };
 
-    runTest(paths, { jade: true, useRelativePaths: true }, done);
+    runTest(paths, { pug: true, useRelativePaths: true }, done);
   });
 
   it('should work with default config and one line options', function (done) {
@@ -82,9 +82,9 @@ describe('gulp-inline-ng2-template', function () {
     var OPTIONS = {
       base: 'test/fixtures',
       useRelative: true,
-      templateExtension: 'jade',
+      templateExtension: 'pug',
       templateProcessor: function (path, ext, file, cb) {
-        return cb(null, require('jade').render(file));
+        return cb(null, require('pug').render(file));
       },
       styleProcessor: function (path, ext, file, cb) {
         return cb(null, require('stylus').render(file));
