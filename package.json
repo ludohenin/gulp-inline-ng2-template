@@ -21,19 +21,19 @@
   "author": "ludohenin <ludovic.henin@yahoo.com>",
   "license": "MIT",
   "dependencies": {
-    "async": "^2.0.0-rc.5",
-    "clone": "~1.0.2",
-    "es6-templates": "~0.2.2",
-    "extend": "~3.0.0",
-    "gulp-util": "~3.0.6",
-    "isarray": "0.0.1",
-    "through2": "~2.0.0"
+    "async": "^2.6.1",
+    "clone": "~2.1.1",
+    "es6-templates": "~0.2.3",
+    "extend": "~3.0.1",
+    "isarray": "2.0.4",
+    "plugin-error": "^1.0.1",
+    "through2": "~2.0.3"
   },
   "devDependencies": {
-    "color": "~0.10.1",
-    "jade": "^1.11.0",
-    "mocha": "~2.2.5",
-    "stylus": "^0.53.0",
-    "vinyl": "~0.5.1"
+    "color": "~3.0.0",
+    "pug": "^2.0.3",
+    "mocha": "~5.2.0",
+    "stylus": "^0.54.5",
+    "vinyl": "~2.1.0"
   }
 }

@@ -1,6 +1,6 @@
 "use strict";
 
-var assert = require('assert');
+var assert = require('assert').strict || require('assert');
 var fs = require('fs');
 var File = require('vinyl');
 var inline = require('../index');
@@ -28,7 +28,7 @@ describe('gulp-inline-ng2-template', function () {
       RESULT_ACTUAL  : './test/fixtures/result_actual_relative.js'
     };
 
-    runTest(paths, { jade: true, useRelativePaths: true }, done);
+    runTest(paths, { pug: true, useRelativePaths: true }, done);
   });
 
   it('should work with default config and one line options', function (done) {
@@ -82,9 +82,9 @@ describe('gulp-inline-ng2-template', function () {
     var OPTIONS = {
       base: 'test/fixtures',
       useRelative: true,
-      templateExtension: 'jade',
+      templateExtension: 'pug',
       templateProcessor: function (path, ext, file, cb) {
-        return cb(null, require('jade').render(file));
+        return cb(null, require('pug').render(file));
       },
       styleProcessor: function (path, ext, file, cb) {
         return cb(null, require('stylus').render(file));
@@ -190,7 +190,7 @@ describe('gulp-inline-ng2-template', function () {
       }
     });
     stream.on('error', function(errorReceived) {
-      assert.equal(errorReceived.message, 'test-error');
+      assert.strictEqual(errorReceived.message, 'test-error');
       done();
     });
 
@@ -207,7 +207,7 @@ describe('gulp-inline-ng2-template', function () {
       }
     });
     stream.on('error', function(errorReceived) {
-      assert.equal(errorReceived.message, 'test-error');
+      assert.strictEqual(errorReceived.message, 'test-error');
       done();
     });
 
@@ -228,7 +228,7 @@ function runTest(paths, pluginOptions, done) {
     // Save the result in a file.
     fs.writeFileSync(paths.RESULT_ACTUAL, result, 'utf8');
 
-    assert.equal(
+    assert.strictEqual(
       result,
       fs.readFileSync(paths.RESULT_EXPECTED).toString()
     );
