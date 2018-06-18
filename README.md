@@ -18,6 +18,8 @@ __note:__
 
 * 5.0.0 - __Breaking changes__
   * Drop Node 4 support (tested with node 8)
+  * Add sourcemap support [thanks to (dhilgarth](https://github.com/dhilgarth)
+  * Fix deps warnings (thanks to [vkennke](https://github.com/vkennke))
 * 4.0.0 -
   * Now escapes templates (html & css) backslashes. You may remove your custom workarounds if any
   * Proper error handling and propagation
