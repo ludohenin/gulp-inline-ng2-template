@@ -16,6 +16,8 @@ with setting `Component.moduleId` on published components.
 
 __note:__
 
+* 5.0.0 - __Breaking changes__
+  * Drop Node 4 support (tested with node 8)
 * 4.0.0 -
   * Now escapes templates (html & css) backslashes. You may remove your custom workarounds if any
   * Proper error handling and propagation
