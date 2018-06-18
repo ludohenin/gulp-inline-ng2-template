@@ -27,7 +27,9 @@
     "extend": "~3.0.1",
     "isarray": "2.0.4",
     "plugin-error": "^1.0.1",
-    "through2": "~2.0.3"
+    "source-map": "^0.7.3",
+    "through2": "~2.0.3",
+    "vinyl-sourcemaps-apply": "^0.2.1"
   },
   "devDependencies": {
     "color": "~3.0.0",

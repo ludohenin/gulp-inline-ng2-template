@@ -213,6 +213,49 @@ describe('gulp-inline-ng2-template', function () {
 
     stream.write(jsFile);
   });
+
+  describe('source maps', function() {
+    var asserts;
+    beforeEach(function() {
+      var jsFile = createFile('./test/fixtures/templates.js');
+      var originalFileContents = jsFile.contents.toString();
+      var stream = inline({
+        base: 'test/fixtures'
+      });
+      stream.once('data', function(file) { 
+        asserts(file, originalFileContents);
+      });  
+      stream.write(jsFile);
+    })
+    it('should create a source map', function(done) {
+      asserts = function(file) {
+        assert.notEqual(file.sourceMap, null);
+        assert.notEqual(file.sourceMap, undefined);
+        assert.notEqual(file.sourceMap, "");
+        done();
+      }
+    }),
+    it('should create a source map with the correct sources', function(done){
+      asserts = function(file) {
+        assert.equal(file.sourceMap.sources.length, 1);
+        assert.equal(file.sourceMap.sources[0], 'test/fixtures/someSrcFile');
+        done();
+      }
+    }),
+    it('should create a source map with the correct generated file name', function(done){
+      asserts = function(file) {
+        assert.equal(file.sourceMap.file, file.basename);
+        done();
+      }
+    }),
+    it('should create a source map with the correct source contents', function(done){
+      asserts = function(file, originalFileContents){
+        assert.equal(file.sourceMap.sourcesContent.length, 1);
+        assert.equal(file.sourceMap.sourcesContent[0], originalFileContents);
+        done();
+      }
+    })
+  });
 });
 
 

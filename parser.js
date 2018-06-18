@@ -9,7 +9,8 @@ var isarray = require('isarray');
 var join = require('path').join;
 var dirname = require('path').dirname;
 var resolve = require('path').resolve;
-
+var SourceMapGenerator = require('source-map').SourceMapGenerator;
+var SourceNode = require('source-map').SourceNode;
 
 // -----------------------------------------------------------------------------
 // Configuration.
@@ -36,14 +37,37 @@ function defaultCustomFilePath(ext, path) {
   return path;
 }
 
+function asLines(str) {
+  return str.replace(/\r/g, '').split('\n');
+}
+
+function normalizeLineBreaks(str) {
+  return asLines(str).join('\n');
+}
+
+function getAllMatches(str, regex) {
+  var matches = [];
+  while (true) {
+      var match = regex.exec(str);
+      if (match) {
+          matches.push(match);
+      } else {
+          return matches;
+      }
+  }
+}
+
+function createRegExpStringForQuotedHtmlFilePath(opts, quote) {
+  return '([^' + quote + ']*' + quote + '[^' + quote + ']*\\' + opts.templateExtension + quote + '([^}),:'+quote+']*?\\))?)';
+}
+
 var htmlOptions = function (opts) {
+  var quotedHtmlFilePathRegExps = ['\'', '\"', '\`'].map(function(x) { return createRegExpStringForQuotedHtmlFilePath(opts, x)}).join('|');
   return {
     type: 'html',
     prop_url: 'templateUrl',
     prop: 'template',
-    start_pattern: /templateUrl\s*:.*/,
-    end_pattern: new RegExp('.*\\' + opts.templateExtension + '\s*(\'\\)|\')|.*\\' + opts.templateExtension + '\s*("\\)|")|.*\\' + opts.templateExtension + '\s*(`\\)|`)'),
-    oneliner_pattern: new RegExp('templateUrl.*(\\' + opts.templateExtension + '\s*(\'\\)|\')|\\' + opts.templateExtension + 's*("\\)|")|\\' + opts.templateExtension + 's*(`\\)|`))')
+    pattern: new RegExp('templateUrl\\s*:\\s(' + quotedHtmlFilePathRegExps + ')', "g")
   };
 };
 
@@ -52,9 +76,7 @@ var cssOptions = function () {
     type: 'css',
     prop_url: 'styleUrls',
     prop: 'styles',
-    start_pattern: /styleUrls\s*:.*/,
-    end_pattern: /.*]/,
-    oneliner_pattern: /styleUrls(.*?)]/
+    pattern: /styleUrls\s*:\s*\[([^\]]*)\]/g
   };
 };
 
@@ -63,59 +85,43 @@ var moduleIdOptions = function () {
     type: 'module_id',
     prop_url: null,
     prop: null,
-    start_pattern: /\s*moduleId\s*:[^,}]*,?/,
-    end_pattern: /[,}],?/,
-    oneliner_pattern: /moduleId\s*:\s*[^,}]*,?/
+    pattern: /,?\s*moduleId\s*:\s*[^,}]*(?=(\n})|(,))/g
   }
 };
 
-
 module.exports = function parser(file, options) {
   var opts = extend({}, defaults, (options || {}));
-  var lines = file.contents.toString().replace(/\r/g, '').split('\n');
-  var start_line_idx, end_line_idx, frag;
+  var originalFile = normalizeLineBreaks(file.contents.toString());
+  var originalLines = asLines(originalFile);
+  var sourceNodes = [];
+  var transformedFile = originalFile;
+  var transformations = [];
   var HTML = false;
   var CSS = false;
   var MODULE_ID = false;
 
   return function parse(done) {
     series([
-      processTemplate,
-      processStyles,
-      removeModuleId
+      generateTemplateTransformations,
+      generateStylesTransformations,
+      generateModuleIdTransformations,
+      applyTransformations
     ], function (err) {
-      done(err, lines.join('\n'));
+      var node = new SourceNode(null, null, file.relative, sourceNodes);
+      node.setSourceContent(file.relative, file.contents.toString());
+      var codeWithSourceMap = node.toStringWithSourceMap({ file: file.basename });
+      done(err, {
+        contents: codeWithSourceMap.code,
+        sourceMap: JSON.parse(codeWithSourceMap.map.toString())
+      });
     });
   };
 
-
-  function processTemplate(done) {
+  function generateTemplateTransformations(done) {
     if (opts.templateProcessor) {
       HTML = true;
       extend(opts, htmlOptions(opts));
-      execute(function (err) {
-        reset();
-        done(err);
-      });
-    }
-  }
-
-  function processStyles(done) {
-    if (opts.styleProcessor) {
-      CSS = true;
-      extend(opts, cssOptions());
-      execute(function (err) {
-        reset();
-        done(err);
-      });
-    }
-  }
-
-  function removeModuleId(done) {
-    if (opts.removeModuleId) {
-      MODULE_ID = true;
-      extend(opts, moduleIdOptions());
-      execute(function (err) {
+      generateTransformations(function (err) {
         reset();
         done(err);
       });
@@ -125,85 +131,117 @@ module.exports = function parser(file, options) {
     }
   }
 
-  function execute(done) {
+  function generateStylesTransformations(done) {
+    if (opts.styleProcessor) {
+      CSS = true;
+      extend(opts, cssOptions());
+      generateTransformations(function (err) {
+        reset();
+        done(err);
+      });
+    } else {
+      reset();
+      done();
+    }
+  }
+
+  function generateModuleIdTransformations(done) {
+    if (opts.removeModuleId) {
+      MODULE_ID = true;
+      extend(opts, moduleIdOptions());
+      generateTransformations(function (err) {
+        reset();
+        done(err);
+      });
+    } else {
+      reset();
+      done();
+    }
+  }
+
+  function generateTransformations(done) {
     var seriesArray = [];
 
-    for(var i = 0; i < lines.length; i++) {
-      (function (i) {
-        seriesArray.push(function (cb) {
-          var idx = i;
-          var line = lines[idx];
-          getIndexes(line, idx);
-          if (i === end_line_idx && start_line_idx) {
-            series([
-              getFragment,
-              replaceFrag
-            ], cb);
-          } else {
-            process.nextTick(cb);
-          }
-        });
-      }(i));
+    var matches = getAllMatches(originalFile, opts.pattern);
+    if(matches) {
+      for(var i = 0; i < matches.length; ++i) {
+        (function(i) {
+          seriesArray.push(function(cb) {
+            var match = matches[i];
+            generateReplacement(match, function(err, replacement) {
+              if(err || (!replacement && replacement != ""))
+                cb(err || 'No replacement has been generated');
+              else {
+                transformations.push({
+                  pattern: opts.pattern,
+                  matchStart: match.index,
+                  matched: match[0],
+                  replacement
+                });
+                cb(null);
+              }
+            });
+            
+          });
+        }(i));
+      }
     }
 
     series(seriesArray, done);
   }
 
-  function getIndexes(line, i) {
-      if (opts.start_pattern.test(line)) {
-        start_line_idx = i;
-      }
-      if (opts.end_pattern.test(line)) {
-        // Match end pattern without start.
-        // end_line_idx is still equal to previous loop turn value.
-        if (start_line_idx <= end_line_idx) return;
-        end_line_idx = i;
-      }
+  function applyTransformations(done) {
+    var offset = 0;
+    var currentPositionInTransformed = 0;
+    transformations.sort(function(a, b) { return a.matchStart - b.matchStart});
+    var previousOriginalLineIndex = 0;
+    var previousOriginalColumn = 0;
+    var previousPositionInOriginal = 0;
+    sourceNodes = [];
+    for(var i = 0; i < transformations.length; ++i) {
+      var transformation = transformations[i];
+      var originalLine = getOriginalLine(transformation.matchStart);
+      addSourceNodesForUnchangedContent(
+        originalFile.substring(previousPositionInOriginal, transformation.matchStart),
+        previousOriginalLineIndex,
+        previousOriginalColumn);
+      var column = transformation.matchStart - originalLine.offset;
+      sourceNodes.push(new SourceNode(
+        originalLine.index + 1, 
+        column,
+        file.relative,
+        transformation.replacement
+      ));
+      previousOriginalLineIndex = originalLine.index;
+      previousOriginalColumn = column;
+      previousPositionInOriginal = transformation.matchStart + transformation.matched.length;
+    }
+
+    addSourceNodesForUnchangedContent(
+      originalFile.substring(previousPositionInOriginal, originalFile.length), 
+      previousOriginalLineIndex, 
+      previousOriginalColumn);
+    done(null);
   }
 
-  function getFragment(cb) {
-    var fragStart, fragEnd;
-    if (start_line_idx < 0 || end_line_idx < 0) return cb();
-    // One liner.
-    if (start_line_idx === end_line_idx) {
-      frag = opts.oneliner_pattern.exec(lines[start_line_idx])[0];
-    }
-    // One or more lines.
-    if (start_line_idx < end_line_idx) {
-      fragStart = opts.start_pattern.exec(lines[start_line_idx])[0];
-      fragEnd   = opts.end_pattern.exec(lines[end_line_idx])[0];
-      frag      = concatLines();
-    }
-
-    process.nextTick(cb);
-
-    function concatLines() {
-      var _lines = clone(lines);
-      _lines[start_line_idx] = fragStart;
-      _lines[end_line_idx]   = fragEnd;
-      return _lines.splice(start_line_idx, end_line_idx - start_line_idx + 1).join('');
-    }
-  }
-
-  function replaceFrag(cb) {
+  function generateReplacement(match, cb) {
     var _urls;
+    var frag = match[0];
     var fnIndex = frag.indexOf('(');
-
     if (opts.prop_url && fnIndex > -1 && opts.templateFunction) {
       // Using template function.
 
       // Check if templateFunction uses single quotes or quote marks.
-      var urlRegex = frag.indexOf('\'') !== -1 ? /'(.*)'/ : /"(.*)"/;
+      var urlRegex = frag.indexOf('\'') !== -1 ? /'([\s\S]*)'/ : /"([\s\S]*)"/;
 
       // Need to clone the regex, since exec() keeps the lastIndex.
       var testRegex = clone(urlRegex), lineCheck = clone(urlRegex);
       var hasMultiline = testRegex.exec(frag)[1];
 
-      if (hasMultiline && hasMultiline.lastIndexOf(",") !== -1) {
+      if (hasMultiline && hasMultiline.lastIndexOf(",") !== -1) {
         _urls = [];
         // Split fragments that kept comma.
         var files = frag.split(",");
-
         // Populate url list, using the return value of the templateFunction.
         for (var i = 0; i < files.length; i++) {
           _urls.push(opts.templateFunction(lineCheck.exec(files[i])[1]));
@@ -220,18 +258,13 @@ module.exports = function parser(file, options) {
     }
 
     var urls  = isarray(_urls) ? _urls : [_urls];
-    var line  = lines[start_line_idx];
+    var line  = getOriginalLine(match.index).content;
     var indentation = /^\s*/.exec(line)[0];
     var assetFiles  = '';
     var startOfInsertionBlock = '\n';
     var endOfInsertionBlock = '\n';
 
-    series([
-      getFilesAndApplyCustomProcessor,
-      _replaceFrag
-    ], cb);
-
-    function _replaceFrag(cb) {
+    function postProcessAssetFiles(cb) {
       assetFiles = assetFiles
         .replace(/\\/g, '\\\\')    // Escape existing backslashes for the final output into a string literal, which would otherwise escape the character after it
         .replace(/\${/g, '\\${')  // Escape ES6 ${myVar} to \${myVar}. ES6 would otherwise look for a local variable named myVar
@@ -259,29 +292,14 @@ module.exports = function parser(file, options) {
         assetFiles = opts.prop + ': [`' + startOfInsertionBlock + assetFiles + endOfInsertionBlock + indentation + '`]';
       if ('es5' === opts.target) assetFiles = compile(assetFiles).code;
 
-      // One liner.
-      if (start_line_idx === end_line_idx) {
-        lines[start_line_idx] = line.replace(opts.oneliner_pattern, assetFiles);
-      }
-      // One or more lines.
-      if (start_line_idx < end_line_idx) {
-        if ('module_id' !== opts.type && /,$/.test(lines[end_line_idx])) {
-          assetFiles += ',';
-        }
-        if (/}\)$/.test(lines[end_line_idx])) {
-          assetFiles += '})';
-        }
-
-        lines[start_line_idx] = line.replace(opts.start_pattern, assetFiles);
-        lines.splice(start_line_idx + 1, end_line_idx - start_line_idx);
-      }
-
-      if (/^\s*$/.test(lines[start_line_idx])) {
-        lines.splice(start_line_idx, 1);
-      }
-
-      cb(null);
+      cb(null, assetFiles);
     }
+
+    
+    getFilesAndApplyCustomProcessor(function(err) { 
+      if(err) cb(err);
+      else postProcessAssetFiles(cb);
+    });
 
     function getFilesAndApplyCustomProcessor(cb) {
       series(urls.map(function (url) {
@@ -342,14 +360,47 @@ module.exports = function parser(file, options) {
     function removeLineBreaks(str) {
       return str.replace(/(\r\n|\n|\r)/gm," ");
     }
-  }
-
+  }  
+  
   function reset() {
-    start_line_idx = undefined;
-    end_line_idx = undefined;
-    frag = undefined;
     HTML = false;
     CSS = false;
     MODULE_ID = false;
+  }
+
+  function getLine(lines, position) {
+    var offset = 0;
+    for(var i = 0; i < lines.length; ++i) {
+      var line = lines[i];
+      if(position <= offset + line.length)
+        return { content: line, index: i, offset };
+      
+      offset += line.length + 1;
+    }
+  }
+
+  function getOriginalLine(position) {
+    return getLine(originalLines, position);
+  }
+  
+  function addSourceNodesForUnchangedContent(contentSincePrevious, previousOriginalLineIndex, previousOriginalColumn) {
+    var lines = contentSincePrevious.split('\n');
+    for(var i = 0; i < lines.length - 1; ++i) {
+      lines[i] = lines[i] + '\n';
+    }
+    sourceNodes.push(new SourceNode(
+      previousOriginalLineIndex + 1,
+      previousOriginalColumn,
+      file.relative,
+      lines[0]
+    ));
+    for(var i = 1; i < lines.length; ++i) {
+      sourceNodes.push(new SourceNode(
+        previousOriginalLineIndex + i + 1,
+        0,
+        file.relative,
+        lines[i]
+      ))
+    }
   }
 };
