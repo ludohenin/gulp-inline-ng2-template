@@ -3,7 +3,7 @@
   selector: 'app'
 })
 @View({
-  templateUrl: './app.jade',
+  templateUrl: './app.pug',
   styleUrls: ['./app.stylus', './common.stylus'],
   directives: [CORE_DIRECTIVES]
 })
