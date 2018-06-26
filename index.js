@@ -22,7 +22,7 @@ module.exports = exports = function inline(options) {
 
       parse(function (err, result) {
         if (err) return cb(new PluginError(PLUGIN_NAME, err, {fileName: file.path}));
-        file.contents = new Buffer(result.contents);
+        file.contents = Buffer.from(result.contents);
         applySourceMap(file, result.sourceMap);
 
         _this.push(file);

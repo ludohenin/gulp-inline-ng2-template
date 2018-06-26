@@ -226,7 +226,7 @@ describe('gulp-inline-ng2-template', function () {
         asserts(file, originalFileContents);
       });  
       stream.write(jsFile);
-    })
+    });
     it('should create a source map', function(done) {
       asserts = function(file) {
         assert.notEqual(file.sourceMap, null);
@@ -281,7 +281,7 @@ function runTest(paths, pluginOptions, done) {
 
 function createFile(filePath) {
   return new File({
-    contents: new Buffer(fs.readFileSync(filePath).toString()),
+    contents: Buffer.from(fs.readFileSync(filePath).toString()),
     path: join(process.cwd(), 'test/fixtures/someSrcFile')
   });
 }
