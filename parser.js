@@ -109,7 +109,7 @@ module.exports = function parser(file, options) {
     ], function (err) {
       var node = new SourceNode(null, null, file.relative, sourceNodes);
       node.setSourceContent(file.relative, file.contents.toString());
-      var codeWithSourceMap = node.toStringWithSourceMap({ file: file.basename });
+      var codeWithSourceMap = node.toStringWithSourceMap({ file: file.relative });
       done(err, {
         contents: codeWithSourceMap.code,
         sourceMap: JSON.parse(codeWithSourceMap.map.toString())
