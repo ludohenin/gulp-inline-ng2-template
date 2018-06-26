@@ -6,6 +6,7 @@ var compile = require('es6-templates').compile;
 var extend = require('extend');
 var fs = require('fs');
 var isarray = require('isarray');
+var basename = require('path').basename;
 var join = require('path').join;
 var dirname = require('path').dirname;
 var resolve = require('path').resolve;
@@ -109,7 +110,7 @@ module.exports = function parser(file, options) {
     ], function (err) {
       var node = new SourceNode(null, null, file.relative, sourceNodes);
       node.setSourceContent(file.relative, file.contents.toString());
-      var codeWithSourceMap = node.toStringWithSourceMap({ file: file.relative });
+      var codeWithSourceMap = node.toStringWithSourceMap({ file: basename(file.relative) });
       done(err, {
         contents: codeWithSourceMap.code,
         sourceMap: JSON.parse(codeWithSourceMap.map.toString())
