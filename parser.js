@@ -78,7 +78,7 @@ var cssOptions = function () {
     type: 'css',
     prop_url: 'styleUrls',
     prop: 'styles',
-    pattern: /styleUrls\s*:\s*\[([^\]]*)\]/g
+    pattern: /styleUrls\s*:\s*\[([^\]]*)]/g
   };
 };
 
@@ -308,7 +308,7 @@ module.exports = function parser(file, options) {
         return function (cb) {
           var data = getFileData(url);
           var path = resolve(dirname(file.path), url);
-          var ext = /\.[0-9a-z]+$/i.exec(url);
+          var ext = /\.[0-9a-z]+$/i.exec(url)[0];
           if (HTML && opts.templateProcessor) {
             process.nextTick(function () {
               opts.templateProcessor(path, ext, data, customProcessorCallback(cb));
@@ -339,7 +339,7 @@ module.exports = function parser(file, options) {
         return '';
       }
 
-      var ext = /\.[0-9a-z]+$/i.exec(absPath);
+      var ext = /\.[0-9a-z]+$/i.exec(absPath)[0];
       absPath = opts.customFilePath(ext, absPath);
 
       return fs.readFileSync(absPath)
