@@ -5,13 +5,14 @@ var clone = require('clone');
 var compile = require('es6-templates').compile;
 var extend = require('extend');
 var fs = require('fs');
-var isarray = require('isarray');
 var basename = require('path').basename;
 var join = require('path').join;
 var dirname = require('path').dirname;
 var resolve = require('path').resolve;
 var SourceMapGenerator = require('source-map').SourceMapGenerator;
 var SourceNode = require('source-map').SourceNode;
+
+var isarray = Array.isArray;
 
 // -----------------------------------------------------------------------------
 // Configuration.
